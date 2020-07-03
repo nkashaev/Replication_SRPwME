@@ -1,0 +1,18 @@
+#!/bin/bash
+cd `dirname $0`
+
+#package installation
+julia AKjuliapackages.jl
+
+# First application, singles
+#julia FirstApp/singles/AK_FirstApp_singles_theta0_1.jl
+
+# First application, couples
+#julia FirstApp/couples/AK_FirstApp_couples_theta0_1.jl
+
+# Second application, price misperception
+#julia SecondApp/pricemisperception/AK_SecondApp_price_sim_900.jl
+
+
+# Second application, trembling hand
+#julia SecondApp/tremblinghand/AK_Footnote_57_experimental_trembling_hand_reps_580.jl

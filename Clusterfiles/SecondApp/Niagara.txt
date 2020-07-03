@@ -1,0 +1,21 @@
+module load gcc/7.3.0 hdf5 julia/1.1.0
+module load r/3.4.3-anaconda5.1.0
+module load julia/1.1.0
+
+
+/home/vaguiar/R/x86_64-pc-linux-gnu-library/4.0/
+
+install.packages(path_to_file="/gpfs/fs1/home/v/vaguiar/vaguiar/ReplicationAK/SecondApp/revealedPrefsmod.tar", repos = NULL, type="source")
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`R RHOME`/lib"
+export LD_LIBRARY_PATH="$RSNT_LD_LIBRARY_PATH:`R RHOME`/lib"
+
+system("LD_LIBRARY_PATH=$RSNT_LD_LIBRARY_PATH `R RHOME`/lib")
+
+ENV["R_HOME"]="/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc7.3/r/4.0.0/lib64/R"
+
+
+ENV["LD_LIBRARY_PATH"]="$RSNT_LD_LIBRARY_PATH `R RHOME`/lib"
+
+ENV["LD_LIBRARY_PATH"]="`R RHOME`/lib"
+
