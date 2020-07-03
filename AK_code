@@ -3,6 +3,7 @@ cd `dirname $0`
 
 #package installation
 julia AKjuliapackages.jl
+julia AKjuliapackages.jl
 
 # First application, singles
 #julia FirstApp/singles/AK_FirstApp_singles_theta0_1.jl
