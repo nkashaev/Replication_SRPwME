@@ -1,0 +1,87 @@
+#Version Julia "1.1.1"
+using DataFrames
+using MathProgBase
+using Clp
+using CSV
+using LinearAlgebra
+################################################################################
+## Setting-up directory
+repdir="C:/Users/vaguiar/Dropbox/ReplicationAK" # To run replication code on a different machine change the path
+diroutput=repdir*"/Output_all"
+dirdata=repdir*"/Data_all"
+
+## Data
+# Sample size
+const n=154
+# Number of time periods
+const T=50
+# Number of goods
+const K=3
+# Read csv files
+dum0=CSV.read(dirdata*"/rationalitydata3goods.csv")
+# break the dataset into subdatasets by individual
+splitdum0=groupby(dum0,:id)
+@eval  splitp=$splitdum0
+#Initialize array of effective prices, for this application \rho= p
+rho=zeros(n,T,K)
+#Initialize array of consumption
+cve=zeros(n,T,K)
+#Fill the arrays
+# Columns 10:12 correspond to prices
+# Columns 4:6 correspond to consumption bundles
+for i=1:n
+    dum0=convert(Array,splitp[i])
+    rho[i,:,:]=dum0[1:T,10:12]
+    cve[i,:,:]=dum0[1:T,4:6]
+end
+
+##########################################################################
+##########################################################################
+#Deterministic
+
+ind=1
+p=rho[ind,:,:]
+q=cve[ind,:,:]
+
+function rdmatrix(;p=p,q=q)
+rdmatrixfill=zeros(T,T)
+for t=1:T, s=1:T
+  if (p[t,:]'*q[t,:])[1]>=(p[t,:]'*q[s,:])[1]
+    rdmatrixfill[t,s]=1
+  end
+end
+rdmatrixfill
+end
+
+function tclosure(;m=m)
+n0=size(m)[2]
+for k=1:n0, i=1:n0, j=1:n0
+  if  m[i,k]==1 && m[k,j]==1
+    m[i,j]=1
+  end
+end
+end
+
+function garpok(;p=p,q=q)
+garpmatrixfill=zeros(T,T)
+m=tclosure(m=rdmatrix(p=p,q=q))
+for t=1:T, s=1:T
+  if m[t,s]==1 && ((p[s,:]'*q[s,:])[1]>(p[s,:]'*q[t,:])[1])
+    garpmatrixfill[t,s]=1
+  end
+end
+maximum(garpmatrixfill)
+## output of zero is a pass, no violation of GARP
+end
+
+garpresults=zeros(n)
+for ind=1:n
+  garpresults[ind]=garpok(p=rho[ind,:,:],q=cve[ind,:,:])
+end
+
+rate=1-sum(garpresults)/n
+
+## Pass Rate
+ratev=["pass-garp" rate]
+DFsolv=convert(DataFrame,ratev)
+CSV.write(diroutput*"/AK_SecondApp_deterministic_test.csv",DFsolv)
