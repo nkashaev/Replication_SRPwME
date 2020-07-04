@@ -30,13 +30,12 @@ function objMCcu_nail(gamma0::Vector, grad::Vector)
   if length(grad) > 0
   end
   @inbounds gtry[:]=0
+  @inbounds valf[:]=0
   expvalf=cu(zeros(n))
-  valf[:]=0
   gamma=cu(gamma0)
 
   numblocks = ceil(Int, n/167)
-  @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-  preobjMCcu_nail(gamma,chainMcu,valf,gtry,expvalf)
-    expvalf=Array(expvalf)*1.0
-    return sum(log.(expvalf))/n
+  @cuda threads=167 blocks=numblocks preobjMCcu_nail(gamma,chainMcu,valf,gtry,expvalf)
+  expvalf=Array(expvalf)*1.0
+  return sum(log.(expvalf))/n
 end
