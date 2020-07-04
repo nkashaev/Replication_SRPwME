@@ -12,7 +12,7 @@ using BlackBoxOptim
 guessgamma=[-1.0,1.0, 1.0]
 dg=length(guessgamma)
 opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-3
+toluser=1e-2
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
