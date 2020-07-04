@@ -42,7 +42,7 @@ function objMCcu_nail(gamma0::Vector, grad::Vector)
   expvalfg=Array(expvalfg)*1.0
   expvalf=Array(expvalf)*1.0
   if length(grad) > 0
-      grad=sum(expvalfg./repeat(expvalf,1,dg),dims=1)'
+      grad=sum(expvalfg./repeat(expvalf,1,dg),dims=1)'/n
   end
   return sum(log.(expvalf))/n
 end
