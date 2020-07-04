@@ -12,14 +12,18 @@ using BlackBoxOptim
 guessgamma=[-1.0,1.0, 1.0]
 dg=length(guessgamma)
 opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-2
+toluser=1e-4
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
 NLopt.min_objective!(opt,objMCcu)
 (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+guessgamma=minx
+(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
 println(minf)
-println(minx)
+guessgamma=minx
+(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+println(minf)
 println(ret)
 println(count)
 
