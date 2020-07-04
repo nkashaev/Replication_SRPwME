@@ -15,7 +15,8 @@ using BlackBoxOptim
 ## Lower bound for the support of the discount factor
 theta0=1.0
 ## Setting-up directory
-repdir="C:/Users/vaguiar/Dropbox/ReplicationAK" # To run replication code on a different machine change the path
+tempdir1=@__DIR__
+repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
 appname="FirstApp"
 rootdir=repdir*"/"*appname
 diroutput=repdir*"/Output_all"
