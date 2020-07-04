@@ -1,156 +1,71 @@
 ###Author: Victor H. Aguiar and Nail Kashaev
 ###email: vhaguiar@gmail.com
-## Version: JULIA 1.1.0 (2019-01-21)
+## Version: JULIA 1.1.1 (2020-06-28)
 
 ################################################################################
 ## Loading Packages and setting up procesors
-#using Distributed
-#count = 0
-#nprocsdum=1
-#addprocs(nprocsdum)
 using LinearAlgebra
 using Random
 using MathProgBase
 using Clp
 using DataFrames
-using JuMP
-using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
-## Theta
-theta0=1.0
+using JuMP
+using Ipopt
 
-################################################################################
+
+## Lower bound for the support of the discount factor of both members of the household
+theta0=.975
+
 ## Setting-up directory
-#rootdir="D:/Dropbox/AKsource/AKEDapp"
-computer="teslamachine"
-appname="/restud_IU_hitnrundisc"
-if computer=="laptop"
-    rootdir="D:/Dropbox/AKsource/AKEDapp"
-end
-if computer=="office"
-    rootdir="D:/Dropbox/Dropbox/AKsource/AKEDapp"
-end
-if computer=="lancemachine"
-    rootdir="C:/Users/nkashaev/Dropbox/AKsource/AKEDapp"
-end
-
-if computer=="teslamachine"
-    rootdir="C:/Users/vaguiar/Dropbox/AKsource/AKEDapp"
-end
-
-
+tempdir1=@__DIR__
+repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
+appname="Appendix_E/E1_incomeuncertainty"
+rootdir=repdir*"/"*appname
+diroutput=repdir*"/Output_all/Appendix"
+dirdata=repdir*"/Data_all"
 ################################################################################
-##
-# data size
-##seed
+## data size
+# Sample size
+const n=2004
+# Number of time periods
 const T=4
- const dg=7
-
-
-###############################################################################
-## Data
-## Price data from Adams et al.
-
-##seed
-dataapp="couples"
-Random.seed!(12)
-## sample size
-#singles
-if dataapp=="singles"
-     const n=185
-end
-
-if dataapp=="couples"
-     const n=2004
-end
-## time length of the original data
-T0=4
-## number of goods
+# Number of goods
 const K=17
-# repetitions for the simulation
-## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-const repn=(0,1500000)
-
-
-## number of proccesors
-#const nprocs0=nprocsdum+1
-
-###########################################
-
+## Repetitions for the integration step
+const repn=(0,500000)   #repn=(burn,number_simulations)
+const dg=T              # dg=degrees of freedom
+chainM=zeros(n,dg,repn[2])
 
 ###############################################################################
 ## Data
-## Price data from Adams et al.
+#Prices
+dum0=CSV.read(dirdata*"/pcouple.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+dum0=reshape(dum0,n,T,K)
+@eval  const p=$dum0
 
-if dataapp=="singles"
-    dir=rootdir*"/singles"
-    dirresults=rootdir*"/singles/results"
+## Consumption
+dum0=CSV.read(dirdata*"/cvecouple.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+dum0=reshape(dum0,n,T,K)
+@eval  const cve=$dum0
 
-    dum0=CSV.read(dir*"/p.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T0,K)
-    @eval  const p=$dum0
-    ## Consumption data from Adams et al.
-    dum0=CSV.read(dir*"/cve.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    ##original scale in the dataset
-    dum0=reshape(dum0,n,T0,K)
-    @eval   cve=$dum0
-
-    ## Interest data from Adams et al.
-    dum0=CSV.read(dir*"/rv.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    ## This step is done following the replication code in Adams et al.
-    @eval const rv=$dum0.+1
-
-
-end;
-
-if dataapp=="couples"
-    dir=rootdir*"/couples"
-    dirresults=rootdir*"/couples/results"
-    dum0=CSV.read(dir*"/pcouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T0,K)
-    @eval const p=$dum0
-    # consumption array
-    dum0=CSV.read(dir*"/cvecouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    #dum0=reshape(dum0,n,T,K)./1e5
-    dum0=reshape(dum0,n,T0,K)./1e5
-    @eval const cve=$dum0
-
-    # interest rate array
-    dum0=CSV.read(dir*"/rvcouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    @eval const rv=$dum0.+1
-
-
-end;
-
-
-
-###############################################################################
-## Data Cleaning, Counterfactual prices
- rho=zeros(n,T,K)
+## Interest rates
+dum0=CSV.read(dirdata*"/rvcouple.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+@eval const rv=$dum0.+1
 
 ## Discounted prices
+rho=zeros(n,T,K)
 for i=1:n
   for t=1:T
     rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
   end
 end
 
-rhoold=rho
-
-## Set Consumption
-cveold=cve
-cve=zeros(n,T,K)
-cve[:,1:T0,:]=cveold
-cve[:,T,:]=cveold[:,T0,:]
-cve
 print("load data ready!")
 
 
