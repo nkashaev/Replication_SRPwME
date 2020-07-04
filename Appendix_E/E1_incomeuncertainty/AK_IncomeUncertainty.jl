@@ -17,7 +17,7 @@ using Ipopt
 
 
 ## Lower bound for the support of the discount factor of both members of the household
-theta0=.975
+theta0=1.0
 
 ## Setting-up directory
 tempdir1=@__DIR__
@@ -36,7 +36,7 @@ const T=4
 const K=17
 ## Repetitions for the integration step
 const repn=(0,500000)   #repn=(burn,number_simulations)
-const dg=T              # dg=degrees of freedom
+const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
 ###############################################################################
@@ -87,13 +87,13 @@ gammav0=zeros(dg)
 ################################################################################
 ## moments
 ## Moment: my function
-include(rootdir*appname*"/cpufunctions/myfun_IU_meandisc.jl")
+include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
 ## chain generation with CUDA
 chainM=zeros(n,dg,repn[2])
-include(rootdir*appname*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
+include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-const nfast=200000
+const nfast=20000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
@@ -104,12 +104,12 @@ GC.gc()
 
 
 chainMcu=cu(chainM[:,:,indfast])
-include(rootdir*appname*"/cudafunctions/cuda_fastoptim_counter.jl")
+include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 print("functions loaded!")
 
 
 ## warmstart
-include(rootdir*appname*"/cpufunctions/warm_start_searchdelta_justcvex_IU.jl")
+include(rootdir*"/cpufunctions/warm_start_searchdelta_justcvex_IU.jl")
 print("warm start ready!")
 
 
@@ -119,8 +119,6 @@ Delta=rand(n)*(1-theta0).+theta0
 gchaincu!(theta0,gammav0,cve,rho,chainM)
 print("chain ready!")
 
-chainM
-chainM[:,:,1]
 
 ###########################################################################3
 ################################################################################################
@@ -135,24 +133,41 @@ chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
 chainMcu=cu(chainMnew)
-include(rootdir*appname*"/cudafunctions/cuda_fastoptim_counter.jl")
+include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 
 ###############################################################################
 ###############################################################################
-Random.seed!(123)
-res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-#res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = 4,MaxTime = 100.0, TraceMode=:silent)
+
+modelm=nothing
+GC.gc()
+modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
+@variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
+
+@NLobjective(modelm, Min, sum(log(1+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
 
 
-minr=best_fitness(res)
-TSMC=2*minr*n
-TSMC
-guessgamma=best_candidate(res)
 
-if (TSMC>1000)
-    guessgamma=zeros(dg)
+JuMP.optimize!(modelm)
+
+
+for d=1:dg
+    guessgamma[d]=JuMP.value(gammaj[d])
 end
+
+# Random.seed!(123)
+# res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
+# #res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = 4,MaxTime = 100.0, TraceMode=:silent)
+
+
+# minr=best_fitness(res)
+# TSMC=2*minr*n
+# TSMC
+# guessgamma=best_candidate(res)
+
+# if (TSMC>1000)
+#     guessgamma=zeros(dg)
+# end
 
 ###############################################################################
 ###############################################################################
@@ -323,42 +338,6 @@ TSMC
 solvegamma=minx
 guessgamma=solvegamma
 ret
-
-
-using JuMP
-using Ipopt
-modelm=nothing
-GC.gc()
-modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
-@variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
-
-chainMnew=chainMnew[:,:,1:20000]
-const nfast=20000
-@NLobjective(modelm, Min, sum(log(1+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
-
-
-
-JuMP.optimize!(modelm)
-
-
-for d=1:dg
-    guessgamma[d]=JuMP.value(gammaj[d])
-end
-
-GC.gc()
-chainMcu=cu(chainMnew)
-include(rootdir*appname*"/cudafunctions/cuda_fastoptim_counter.jl")
-opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-12
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
-NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
 
 
 
