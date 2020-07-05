@@ -14,8 +14,8 @@ using NLopt
 using BlackBoxOptim
 using JuMP
 using Ipopt
-
-
+#add https://github.com/emmt/OptimPack.jl
+using OptimPack
 ## Lower bound for the support of the discount factor of both members of the household
 theta0=1.0
 
@@ -137,6 +137,10 @@ chainMcu=cu(chainMnew)
 include(rootdir*"/cudafunctions/cuda_nail.jl")
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
+
+
+bobyqa!(f, x, xl, xu, rhobeg, rhoend, npt=npt,
+                        verbose=2, maxeval=500000)
 
 ###############################################################################
 ###############################################################################
