@@ -35,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,500000)   #repn=(burn,number_simulations)
+const repn=(0,1500000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -89,11 +89,10 @@ gammav0=zeros(dg)
 ## Moment: my function
 include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
 ## chain generation with CUDA
-chainM=zeros(n,dg,repn[2])
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-const nfast=20000
+const nfast=200000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
@@ -151,6 +150,7 @@ modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
 JuMP.optimize!(modelm)
 
 
+guessgamma=zeros(dg)
 for d=1:dg
     guessgamma[d]=JuMP.value(gammaj[d])
 end
@@ -171,7 +171,14 @@ end
 
 ###############################################################################
 ###############################################################################
-
+guessgamma=[-37.91552242
+34.32517357
+1.157511448
+-0.861352236
+-6.133957924
+-6.699938902
+-4.957071496
+]
 
 opt=NLopt.Opt(:LN_BOBYQA,dg)
 toluser=1e-6
