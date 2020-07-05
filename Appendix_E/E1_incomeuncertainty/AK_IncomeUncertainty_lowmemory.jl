@@ -35,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,500000)   #repn=(burn,number_simulations)
+const repn=(0,50000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -93,7 +93,7 @@ chainM=zeros(n,dg,repn[2])
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-const nfast=20000
+const nfast=10000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
@@ -134,11 +134,25 @@ chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
 chainMcu=cu(chainMnew)
+include(rootdir*"/cudafunctions/cuda_nail.jl")
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 
 ###############################################################################
 ###############################################################################
+objMCcu_nail(zeros(dg), [0])
+opt=NLopt.Opt(:LD_MMA,dg)
+toluser=1e-6
+NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+NLopt.upper_bounds!(opt,ones(dg).*Inf)
+NLopt.xtol_rel!(opt,toluser)
+NLopt.min_objective!(opt,objMCcu_nail)
+guessgamma=zeros(dg)
+    #gammav0[:]=gamma1
+(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+TSMC=2*minf*n
+TSMC
+
 
 modelm=nothing
 GC.gc()
@@ -173,16 +187,47 @@ end
 ###############################################################################
 ###############################################################################
 
-
+guessgamma=zeros(dg)
 opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-6
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
+toluser=1e-20
+xtolrel=1e-20
+ftolabs=1e-20
+toluser/ftolabs
+NLopt.lower_bounds(opt,ones(dg).*-Inf)
+NLopt.upper_bounds(opt,ones(dg).*Inf)
+NLopt.xtol_rel!(opt,xtolrel)
+NLopt.xtol_abs!(opt,toluser)
+NLopt.ftol_abs!(opt,ftolabs)
+NLopt.stopval!(opt,0.0)
+NLopt.srand(123)
 NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
+#gammav0=randn(dg)*1000
     #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+TSMC=2*minf*n
+TSMC
+solvegamma=minx
+guessgamma=solvegamma
+ret
+
+## Try 2
+guessgamma=zeros(dg)
+opt=NLopt.Opt(:LN_BOBYQA,dg)
+toluser=1e-20
+xtolrel=1e-20
+ftolabs=1e-20
+toluser/ftolabs
+NLopt.lower_bounds(opt,ones(dg).*-Inf)
+NLopt.upper_bounds(opt,ones(dg).*Inf)
+NLopt.xtol_rel!(opt,xtolrel)
+NLopt.xtol_abs!(opt,toluser)
+NLopt.ftol_abs!(opt,ftolabs)
+NLopt.stopval!(opt,0.0)
+NLopt.srand(123)
+NLopt.min_objective!(opt,objMCcu)
+#gammav0=randn(dg)*1000
+    #gammav0[:]=gamma1
+(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
 TSMC=2*minf*n
 TSMC
 solvegamma=minx
