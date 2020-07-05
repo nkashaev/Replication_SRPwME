@@ -35,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,50000)   #repn=(burn,number_simulations)
+const repn=(0,20000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -142,17 +142,15 @@ include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 ###############################################################################
 objMCcu_nail(zeros(dg), [0])
 opt=NLopt.Opt(:LD_MMA,dg)
-toluser=1e-6
+toluser=1e-12
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
 NLopt.min_objective!(opt,objMCcu_nail)
-guessgamma=zeros(dg)
+guessgamma=rand(dg)
     #gammav0[:]=gamma1
 (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
+guessgamma=minx
 
 modelm=nothing
 GC.gc()
