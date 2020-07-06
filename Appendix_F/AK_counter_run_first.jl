@@ -16,7 +16,7 @@ using NLopt
 using BlackBoxOptim
 ## Theta
 ### This first run only initializes the memory in cuda before the loop.
-theta0=0.1
+theta0=0.975
 kap=10
 ##Petrol quantity and petrol price target=10, targetgood=10
 #target good
