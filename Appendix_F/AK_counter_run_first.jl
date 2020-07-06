@@ -4,15 +4,11 @@
 
 ################################################################################
 ## Loading Packages and setting up procesors
-using Distributed
-count = 0
-nprocsdum=1
-addprocs(nprocsdum)
-@everywhere using LinearAlgebra
-@everywhere using Random
-@everywhere using MathProgBase
-@everywhere using Clp
-@everywhere using DataFrames
+using LinearAlgebra
+using Random
+using MathProgBase
+using Clp
+using DataFrames
 using JuMP
 using Ipopt
 using CSV
@@ -22,10 +18,11 @@ using Sobol
 ## Theta
 theta0=0.1
 rate=4
-@everywhere kap=10
-@everywhere target=10
-@everywhere targetgood=7
-@everywhere bshare=.05
+kap=10
+##Petrol quantity and petrol price target=10, targetgood=10
+target=10
+targetgood=10
+bshare=.05
 
 ################################################################################
 ## Setting-up directory
@@ -46,8 +43,8 @@ end
 ##
 # data size
 ##seed
-@everywhere const T=5
-@everywhere  const dg=5
+const T=5
+ const dg=5
 
 
 ###############################################################################
@@ -56,23 +53,23 @@ end
 
 ##seed
 dataapp="singles"
-@everywhere Random.seed!(12)
+Random.seed!(12)
 ## sample size
 #singles
 if dataapp=="singles"
-    @everywhere  const n=185
+     const n=185
 end
 
 if dataapp=="couples"
-    @everywhere  const n=2004
+     const n=2004
 end
 ## time length of the original data
-@everywhere T0=4
+T0=4
 ## number of goods
-@everywhere const K=17
+const K=17
 # repetitions for the simulation
 ## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-@everywhere const repn=(0,10000)
+const repn=(0,10000)
 
 
 ## number of proccesors
@@ -92,19 +89,19 @@ if dataapp=="singles"
     dum0=CSV.read(dir*"/p.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
     dum0=reshape(dum0,n,T0,K)
-    @eval @everywhere  const p=$dum0
+    @eval  const p=$dum0
     ## Consumption data from Adams et al.
     dum0=CSV.read(dir*"/cve.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
     ##original scale in the dataset
     dum0=reshape(dum0,n,T0,K)
-    @eval @everywhere   cve=$dum0
+    @eval   cve=$dum0
 
     ## Interest data from Adams et al.
     dum0=CSV.read(dir*"/rv.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
     ## This step is done following the replication code in Adams et al.
-    @eval @everywhere const rv=$dum0.+1
+    @eval const rv=$dum0.+1
 
 
 end;
@@ -115,18 +112,18 @@ if dataapp=="couples"
     dum0=CSV.read(dir*"/pcouple.csv",allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
     dum0=reshape(dum0,n,T0,K)
-    @eval @everywhere const p=$dum0
+    @eval const p=$dum0
     # consumption array
     dum0=CSV.read(dir*"/cvecouple.csv",allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
     #dum0=reshape(dum0,n,T,K)./1e5
     dum0=reshape(dum0,n,T0,K)./1e5
-    @eval @everywhere const cve=$dum0
+    @eval const cve=$dum0
 
     # interest rate array
     dum0=CSV.read(dir*"/rvcouple.csv",allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
-    @eval @everywhere const rv=$dum0.+1
+    @eval const rv=$dum0.+1
 
 
 end;
@@ -135,24 +132,24 @@ end;
 
 ###############################################################################
 ## Data Cleaning, Counterfactual prices
-@everywhere  rho=zeros(n,T,K)
+ rho=zeros(n,T,K)
 
 ## Discounted prices
-@everywhere for i=1:n
+for i=1:n
   for t=1:(T0)
     rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
   end
 end
 ## Scaling up rho by kap
 if rate==5
-    @everywhere for i=1:n
+    for i=1:n
         rho[i,T,:]=rho[i,T-1,:]*($theta0)^(T)
         rho[i,T,target]=rho[i,T,target]*kap
     end
 end
 
 if rate==4
-    @everywhere for i=1:n
+    for i=1:n
         rho[i,T,:]=rho[i,T-1,:]/rv[i,T0]
         rho[i,T,target]=rho[i,T,target]*kap
     end
@@ -193,7 +190,7 @@ chainM=zeros(n,dg,repn[2])
 include(rootdir*"/restud_counter/cudafunctions/cuda_chainfun.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-@everywhere global nfast=10000
+global nfast=10000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
