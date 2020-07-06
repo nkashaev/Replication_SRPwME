@@ -35,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,20000)   #repn=(burn,number_simulations)
+const repn=(0,1000000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -89,7 +89,6 @@ gammav0=zeros(dg)
 ## Moment: my function
 include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
 ## chain generation with CUDA
-chainM=zeros(n,dg,repn[2])
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
@@ -137,16 +136,16 @@ chainMcu=cu(chainMnew)
 include(rootdir*"/cudafunctions/cuda_nail.jl")
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
-
-
-bobyqa!(f, x, xl, xu, rhobeg, rhoend, npt=npt,
-                        verbose=2, maxeval=500000)
+#
+#
+# bobyqa!(f, x, xl, xu, rhobeg, rhoend, npt=npt,
+#                         verbose=2, maxeval=500000)
 
 ###############################################################################
 ###############################################################################
 objMCcu_nail(zeros(dg), [0])
-opt=NLopt.Opt(:LD_MMA,dg)
-toluser=1e-12
+opt=NLopt.Opt(:LN_BOBYQA,dg)
+toluser=1e-20
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
@@ -156,31 +155,31 @@ guessgamma=rand(dg)
 (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
 guessgamma=minx
 
-modelm=nothing
-GC.gc()
-modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
-@variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
+# modelm=nothing
+# GC.gc()
+# modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
+# @variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
+#
+# @NLobjective(modelm, Min, sum(log(1+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
+#
+#
+#
+# JuMP.optimize!(modelm)
+#
+#
+# for d=1:dg
+#     guessgamma[d]=JuMP.value(gammaj[d])
+# end
 
-@NLobjective(modelm, Min, sum(log(1+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
-
-
-
-JuMP.optimize!(modelm)
-
-
-for d=1:dg
-    guessgamma[d]=JuMP.value(gammaj[d])
-end
-
-# Random.seed!(123)
-# res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
+Random.seed!(123)
+res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100000.0, TraceMode=:silent)
 # #res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = 4,MaxTime = 100.0, TraceMode=:silent)
 
 
-# minr=best_fitness(res)
-# TSMC=2*minr*n
-# TSMC
-# guessgamma=best_candidate(res)
+minr=best_fitness(res)
+TSMC=2*minr*n
+TSMC
+guessgamma=best_candidate(res)
 
 # if (TSMC>1000)
 #     guessgamma=zeros(dg)
@@ -189,7 +188,6 @@ end
 ###############################################################################
 ###############################################################################
 
-guessgamma=zeros(dg)
 opt=NLopt.Opt(:LN_BOBYQA,dg)
 toluser=1e-20
 xtolrel=1e-20
@@ -211,215 +209,214 @@ TSMC
 solvegamma=minx
 guessgamma=solvegamma
 ret
-
-## Try 2
-guessgamma=zeros(dg)
-opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-20
-xtolrel=1e-20
-ftolabs=1e-20
-toluser/ftolabs
-NLopt.lower_bounds(opt,ones(dg).*-Inf)
-NLopt.upper_bounds(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,xtolrel)
-NLopt.xtol_abs!(opt,toluser)
-NLopt.ftol_abs!(opt,ftolabs)
-NLopt.stopval!(opt,0.0)
-NLopt.srand(123)
-NLopt.min_objective!(opt,objMCcu)
-#gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-solvegamma=minx
-guessgamma=solvegamma
-ret
-##try 2
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-#try 3
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-
-if (TSMC>=0)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-    TSMC
-end
-#############################################################
-############################################
-
-TSMC
-
-opt=NLopt.Opt(:LN_NELDERMEAD,dg)
-toluser=1e-6
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
-NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-
-solvegamma=minx
-guessgamma=solvegamma
-ret
-TSMC
-
-opt=NLopt.Opt(:LN_SBPLX,dg)
-toluser=1e-6
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
-NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-solvegamma=minx
-guessgamma=solvegamma
-ret
-
-
-
-opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=1e-12
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
-NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
-
-(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-TSMC=2*minf*n
-TSMC
+#
+# ## Try 2
+# opt=NLopt.Opt(:LN_BOBYQA,dg)
+# toluser=1e-20
+# xtolrel=1e-20
+# ftolabs=1e-20
+# toluser/ftolabs
+# NLopt.lower_bounds(opt,ones(dg).*-Inf)
+# NLopt.upper_bounds(opt,ones(dg).*Inf)
+# NLopt.xtol_rel!(opt,xtolrel)
+# NLopt.xtol_abs!(opt,toluser)
+# NLopt.ftol_abs!(opt,ftolabs)
+# NLopt.stopval!(opt,0.0)
+# NLopt.srand(123)
+# NLopt.min_objective!(opt,objMCcu)
+# #gammav0=randn(dg)*1000
+#     #gammav0[:]=gamma1
+# (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+# solvegamma=minx
+# guessgamma=solvegamma
+# ret
+# ##try 2
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# #try 3
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+#
+# if (TSMC>=0)
+#     (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+#     TSMC=2*minf*n
+#     TSMC
+#     solvegamma=minx
+#     guessgamma=solvegamma
+#     ret
+#     TSMC
+# end
+# #############################################################
+# ############################################
+#
+# TSMC
+#
+# opt=NLopt.Opt(:LN_NELDERMEAD,dg)
+# toluser=1e-6
+# NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+# NLopt.upper_bounds!(opt,ones(dg).*Inf)
+# NLopt.xtol_rel!(opt,toluser)
+# NLopt.min_objective!(opt,objMCcu)
+# gammav0=randn(dg)*1000
+#     #gammav0[:]=gamma1
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+#
+# solvegamma=minx
+# guessgamma=solvegamma
+# ret
+# TSMC
+#
+# opt=NLopt.Opt(:LN_SBPLX,dg)
+# toluser=1e-6
+# NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+# NLopt.upper_bounds!(opt,ones(dg).*Inf)
+# NLopt.xtol_rel!(opt,toluser)
+# NLopt.min_objective!(opt,objMCcu)
+# gammav0=randn(dg)*1000
+#     #gammav0[:]=gamma1
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+# solvegamma=minx
+# guessgamma=solvegamma
+# ret
+#
+#
+#
+# opt=NLopt.Opt(:LN_BOBYQA,dg)
+# toluser=1e-12
+# NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+# NLopt.upper_bounds!(opt,ones(dg).*Inf)
+# NLopt.xtol_rel!(opt,toluser)
+# NLopt.min_objective!(opt,objMCcu)
+# gammav0=randn(dg)*1000
+#     #gammav0[:]=gamma1
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+#
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+#
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+#
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+#
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
+#
+# (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+# TSMC=2*minf*n
+# TSMC
 
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TSGMMcueMC"]))
