@@ -35,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,10000)   #repn=(burn,number_simulations)
+const repn=(0,50000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -92,7 +92,7 @@ include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-const nfast=10000
+const nfast=20000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
