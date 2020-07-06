@@ -14,7 +14,6 @@ using NLopt
 using BlackBoxOptim
 using JuMP
 using Ipopt
-#add "https://github.com/emmt/OptimPack.jl"
 using OptimPack
 
 ## Lower bound for the support of the discount factor of both members of the household
@@ -36,7 +35,7 @@ const T=4
 # Number of goods
 const K=17
 ## Repetitions for the integration step
-const repn=(0,1500000)   #repn=(burn,number_simulations)
+const repn=(0,10000)   #repn=(burn,number_simulations)
 const dg=7              # dg=degrees of freedom
 chainM=zeros(n,dg,repn[2])
 
@@ -93,12 +92,10 @@ include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-const nfast=200000
+const nfast=10000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
-#indfast=repn[2]-nfast+1:repn[2]
-#indfast=1:nfast
 chainMcu=nothing
 GC.gc()
 
@@ -124,11 +121,6 @@ print("chain ready!")
 ################################################################################################
 ## Optimization step in cuda
 
-Random.seed!(123)
-indfast=rand(1:repn[2],nfast)
-indfast[1]=1
-chainMcu=nothing
-GC.gc()
 chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
@@ -138,23 +130,7 @@ include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 ###############################################################################
 ###############################################################################
-modelm=nothing
-GC.gc()
-modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
-@variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
-
-@NLobjective(modelm, Min, sum(log(0.00000001+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
-
-
-
-JuMP.optimize!(modelm)
-
-
-guessgamma=zeros(dg)
-for d=1:dg
-    guessgamma[d]=JuMP.value(gammaj[d])
-end
-
+## BlackBox Optimization warm-start
 Random.seed!(123)
 res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 1000.0, TraceMode=:silent)
 
@@ -164,29 +140,13 @@ TSMC=2*minr*n
 TSMC
 guessgamma=best_candidate(res)
 
-# if (TSMC>1000)
-#     guessgamma=zeros(dg)
-# end
+if (objMCcu2c(guessgamma)>objMCcu2c(zeros(dg)))
+     guessgamma=zeros(dg)
+end
 
-###############################################################################
-###############################################################################
-# x=[-37.91552242; 34.32517357; 1.157511448; -0.861352236; -6.133957924; -6.699938902; -4.957071496]
-# #pilot
-# chainMcu=chainMcu[:,:,1:nfast2]
-# const nfast=nfast2
-# include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
-# x=[-2.516131061;-0.187154195;-0.939469821;-0.91567927;-1.880530005;-4.148418873;-2.583267192]
-# 2*n*objMCcu2c(x)
-#
-# #v2
-# x=[-8.567284025;9.560498442;-9.51E-05;-2.815263282;-3.847128461;-5.876402012;-4.12919468]
-# 2*n*objMCcu2c(x)
-#
-# #v1
-# x=[-14.30313126;13.36789445;-3.54E-06;0.245311178;-2.473584845;-3.66265923;-5.019617641]
-# 2*n*objMCcu2c(x)
-
+## BOBYQA refinement
 x=guessgamma
+## default parameters as in Powell's 2009 paper
 bdl = -Inf
 bdu =  Inf
 xl=ones(dg).*bdl
@@ -197,13 +157,13 @@ n0=length(x)
 npt = 2*n0 + 1
 maxevalpar=minimum([100*(n0+1),1000])
 
-
+## OptimPack rewrites x
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 2
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
@@ -211,7 +171,7 @@ res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
 
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 3
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
@@ -219,35 +179,35 @@ res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
 
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 4
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 5
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 6
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 7
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 
 ##Try 8
@@ -255,36 +215,33 @@ res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 ##Try 9
 res=OptimPack.Powell.bobyqa!(objMCcu2c, x, xl, xu, rhobeg, rhoend, npt=npt,
                          verbose=1, maxeval=maxevalpar)
 minf=res[[3]][1]
 TSMC=2*minf*n
-TSMC
+println(TSMC)
 
 
 #############################################################
 ############################################
-
-TSMC
+## Final refinement
 
 opt=NLopt.Opt(:LN_NELDERMEAD,dg)
-toluser=1e-6
+toluser=1e-12
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
 NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
 (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
 TSMC=2*minf*n
+println(TSMC)
 
 solvegamma=minx
 guessgamma=solvegamma
 ret
-TSMC
 
 opt=NLopt.Opt(:LN_SBPLX,dg)
 toluser=1e-6
@@ -292,14 +249,12 @@ NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
 NLopt.xtol_rel!(opt,toluser)
 NLopt.min_objective!(opt,objMCcu)
-gammav0=randn(dg)*1000
-    #gammav0[:]=gamma1
 (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
 TSMC=2*minf*n
-TSMC
 solvegamma=minx
 guessgamma=solvegamma
 ret
+println(TSMC)
 
 
 
