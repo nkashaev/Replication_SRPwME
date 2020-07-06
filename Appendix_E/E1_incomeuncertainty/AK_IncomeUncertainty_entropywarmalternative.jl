@@ -143,7 +143,7 @@ GC.gc()
 modelm=JuMP.Model(with_optimizer(Ipopt.Optimizer))
 @variable(modelm, -10e300 <= gammaj[1:dg] <= 10e300)
 
-@NLobjective(modelm, Min, sum(log(1+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
+@NLobjective(modelm, Min, sum(log(0.00000001+sum(exp(sum(chainMnew[id,t,j]*gammaj[t] for t in 1:dg)) for j in 1:nfast)/nfast) for id in 1:n)/n )
 
 
 
@@ -155,15 +155,14 @@ for d=1:dg
     guessgamma[d]=JuMP.value(gammaj[d])
 end
 
-# Random.seed!(123)
-# res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-# #res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = 4,MaxTime = 100.0, TraceMode=:silent)
+Random.seed!(123)
+res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 1000.0, TraceMode=:silent)
 
 
-# minr=best_fitness(res)
-# TSMC=2*minr*n
-# TSMC
-# guessgamma=best_candidate(res)
+minr=best_fitness(res)
+TSMC=2*minr*n
+TSMC
+guessgamma=best_candidate(res)
 
 # if (TSMC>1000)
 #     guessgamma=zeros(dg)
