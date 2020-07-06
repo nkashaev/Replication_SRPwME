@@ -14,29 +14,25 @@ using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
-using Sobol
 ## Theta
+### This first run only initializes the memory in cuda before the loop.
 theta0=0.1
-rate=4
 kap=10
 ##Petrol quantity and petrol price target=10, targetgood=10
-target=10
+#target good
 targetgood=10
+##price change
+target=10
 bshare=.05
 
 ################################################################################
 ## Setting-up directory
-#rootdir="D:/Dropbox/AKsource/AKEDapp"
-computer="lancemachine"
-if computer=="laptop"
-    rootdir="D:/Dropbox/AKsource/AKEDapp"
-end
-if computer=="office"
-    rootdir="D:/Dropbox/Dropbox/AKsource/AKEDapp"
-end
-if computer=="lancemachine"
-    rootdir="C:/Users/nkashaev/Dropbox/AKsource/AKEDapp"
-end
+tempdir1=@__DIR__
+repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
+appname="Appendix_F"
+rootdir=repdir*"/"*appname
+diroutput=repdir*"/Output_all/Appendix"
+dirdata=repdir*"/Data_all"
 
 
 ################################################################################
@@ -44,25 +40,15 @@ end
 # data size
 ##seed
 const T=5
- const dg=5
+const dg=5
 
 
 ###############################################################################
 ## Data
-## Price data from Adams et al.
-
-##seed
-dataapp="singles"
-Random.seed!(12)
 ## sample size
 #singles
-if dataapp=="singles"
-     const n=185
-end
+const n=185
 
-if dataapp=="couples"
-     const n=2004
-end
 ## time length of the original data
 T0=4
 ## number of goods
@@ -72,92 +58,49 @@ const K=17
 const repn=(0,10000)
 
 
-## number of proccesors
-const nprocs0=nprocsdum+1
-
-###########################################
-
 
 ###############################################################################
 ## Data
-## Price data from Adams et al.
-
-if dataapp=="singles"
-    dir=rootdir*"/singles"
-    dirresults=rootdir*"/singles/results"
-
-    dum0=CSV.read(dir*"/p.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T0,K)
-    @eval  const p=$dum0
-    ## Consumption data from Adams et al.
-    dum0=CSV.read(dir*"/cve.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    ##original scale in the dataset
-    dum0=reshape(dum0,n,T0,K)
-    @eval   cve=$dum0
-
-    ## Interest data from Adams et al.
-    dum0=CSV.read(dir*"/rv.csv",datarow=2,allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    ## This step is done following the replication code in Adams et al.
-    @eval const rv=$dum0.+1
-
-
-end;
-
-if dataapp=="couples"
-    dir=rootdir*"/couples"
-    dirresults=rootdir*"/couples/results"
-    dum0=CSV.read(dir*"/pcouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T0,K)
-    @eval const p=$dum0
-    # consumption array
-    dum0=CSV.read(dir*"/cvecouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    #dum0=reshape(dum0,n,T,K)./1e5
-    dum0=reshape(dum0,n,T0,K)./1e5
-    @eval const cve=$dum0
-
-    # interest rate array
-    dum0=CSV.read(dir*"/rvcouple.csv",allowmissing=:none)
-    dum0=convert(Matrix,dum0[:,:])
-    @eval const rv=$dum0.+1
-
-
-end;
-
-
-
 ###############################################################################
-## Data Cleaning, Counterfactual prices
- rho=zeros(n,T,K)
+
+#Prices
+dum0=CSV.read(dirdata*"/p.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+dum0=reshape(dum0,n,T,K)
+@eval  const p=$dum0
+
+## Consumption
+dum0=CSV.read(dirdata*"/cve.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+dum0=reshape(dum0,n,T,K)
+@eval  const cve=$dum0
+
+## Interest rates
+dum0=CSV.read(dirdata*"/rv.csv",datarow=2,allowmissing=:none)
+dum0=convert(Matrix,dum0[:,:])
+@eval const rv=$dum0.+1
 
 ## Discounted prices
+rho=zeros(n,T,K)
 for i=1:n
-  for t=1:(T0)
+  for t=1:T
     rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
   end
 end
-## Scaling up rho by kap
-if rate==5
-    for i=1:n
-        rho[i,T,:]=rho[i,T-1,:]*($theta0)^(T)
-        rho[i,T,target]=rho[i,T,target]*kap
-    end
+
+###############################################################################
+## Data Cleaning, Counterfactual prices
+
+## Scaling up rho by kap and adjusting by  0.06 interest rate
+for i=1:n
+    rho[i,T,:]=rho[i,T-1,:]/(1+0.06)
+    rho[i,T,target]=rho[i,T,target]*kap
 end
 
-if rate==4
-    for i=1:n
-        rho[i,T,:]=rho[i,T-1,:]/rv[i,T0]
-        rho[i,T,target]=rho[i,T,target]*kap
-    end
-end
 
 rhoold=rho
 
-## Set Consumption
+## Set Consumption, we initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
 cveold=cve
 cve=zeros(n,T,K)
 cve[:,1:T0,:]=cveold
@@ -184,28 +127,26 @@ gammav0=zeros(dg)
 ################################################################################
 ## moments
 ## Moment: my function
-include(rootdir*"/restud_counter/cpufunctions/myfun_counter.jl")
+include(rootdir*"/cpufunctions/myfun_counter.jl")
 ## chain generation with CUDA
 chainM=zeros(n,dg,repn[2])
-include(rootdir*"/restud_counter/cudafunctions/cuda_chainfun.jl")
+include(rootdir*"/cudafunctions/cuda_chainfun.jl")
 ## optimization with CUDA
 numblocks = ceil(Int, n/100)
-global nfast=10000
+const nfast=10000
 Random.seed!(123)
 indfast=rand(1:repn[2],nfast)
 indfast[1]=1
-#indfast=repn[2]-nfast+1:repn[2]
-#indfast=1:nfast
 chainMcu=nothing
 GC.gc()
 
 chainMcu=cu(chainM[:,:,indfast])
-include(rootdir*"/restud_counter/cudafunctions/cuda_fastoptim_counter.jl")
+include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 print("functions loaded!")
 
 
 ## warmstart
-include(rootdir*"/restud_counter/cpufunctions/warm_start_searchdelta_justcvex.jl")
+include(rootdir*"/cpufunctions/warm_start_searchdelta_justcvex.jl")
 print("warm start ready!")
 
 
@@ -218,17 +159,14 @@ print("chain ready!")
 ###########################################################################3
 ################################################################################################
 ## Optimization step in cuda
-Random.seed!(123)
-indfast=rand(1:repn[2],nfast)
-indfast[1]=1
 chainMcu[:,:,:]=cu(chainM[:,:,indfast])
+include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 
 ###############################################################################
 ###############################################################################
 Random.seed!(123)
 res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-#res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = 4,MaxTime = 100.0, TraceMode=:silent)
 
 
 minr=best_fitness(res)
@@ -285,12 +223,9 @@ TSMC
 
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TSGMMcueMC"]))
-#names!(Results1,Symbol.(["theta0","TSGMMnovar","TSGMMcue","TSGMMcueMC"]))
 Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
-#CSV.write(dirresults*"/chainM50K.csv",DataFrame(reshape(chainM,n*T,repn[2])))
-#CSV.write()
-#CSV.write(dirresults*"/results_TS_cuda_$theta0.csv",Results1)
-#CSV.write(dirresults*"/results_gamma_cuda_$theta0.csv",Results1gamma)
+CSV.write(diroutput*"/results_TS_cuda_$theta0.csv",Results1)
+CSV.write(diroutput*"/results_gamma_cuda_$theta0.csv",Results1gamma)
 
 Results1
 
