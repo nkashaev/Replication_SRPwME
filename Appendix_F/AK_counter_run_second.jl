@@ -47,22 +47,22 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         ################################################################################
         # data size
         ##seed
-        const T=5
-        const dg=5
+        T=5
+        dg=5
 
         ###############################################################################
         ## Data
         ## sample size
         #singles
-        const n=185
+        n=185
 
         ## time length of the original data
         T0=4
         ## number of goods
-        const K=17
+        K=17
         # repetitions for the simulation
         ## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-        const repn=(0,10000)
+        repn=(0,10000)
 
         ###############################################################################
         ## Data
@@ -72,18 +72,18 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         dum0=CSV.read(dirdata*"/p.csv",datarow=2,allowmissing=:none)
         dum0=convert(Matrix,dum0[:,:])
         dum0=reshape(dum0,n,T0,K)
-        @eval  const p=$dum0
+        @eval  p=$dum0
 
         ## Consumption
         dum0=CSV.read(dirdata*"/cve.csv",datarow=2,allowmissing=:none)
         dum0=convert(Matrix,dum0[:,:])
         dum0=reshape(dum0,n,T0,K)
-        @eval  const cve=$dum0
+        @eval  cvetemp=$dum0
 
         ## Interest rates
         dum0=CSV.read(dirdata*"/rv.csv",datarow=2,allowmissing=:none)
         dum0=convert(Matrix,dum0[:,:])
-        @eval const rv=$dum0.+1
+        @eval rv=$dum0.+1
 
         ## Discounted prices
         rho=zeros(n,T,K)
@@ -106,22 +106,11 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         rhoold=rho
 
         ## Set Consumption, we initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
-        cveold=cve
         cve=zeros(n,T,K)
-        cve[:,1:T0,:]=cveold
-        cve[:,T,:]=cveold[:,T0,:]
+        cve[:,1:T0,:]=cvetemp
+        cve[:,T,:]=cvetemp[:,T0,:]
         cve
         print("load data ready!")
-
-
-
-        ################################################################################
-        ## Initializing
-
-        ###########################################
-
-        Random.seed!(123)
-        gammav0=zeros(dg)
 
 
         ################################################################################
@@ -141,13 +130,13 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         ################################################################################
         ## moments
         ## Moment: my function
-        include(rootdir*"/cpufunctions/myfun_counter.jl")
+        #include(rootdir*"/cpufunctions/myfun_counter.jl")
         ## chain generation with CUDA
         chainM=zeros(n,dg,repn[2])
-        include(rootdir*"/cudafunctions/cuda_chainfun.jl")
+        #include(rootdir*"/cudafunctions/cuda_chainfun.jl")
         ## optimization with CUDA
         numblocks = ceil(Int, n/100)
-        const nfast=10000
+        nfast=10000
         Random.seed!(123)
         indfast=rand(1:repn[2],nfast)
         indfast[1]=1
@@ -155,7 +144,7 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         GC.gc()
 
         chainMcu=cu(chainM[:,:,indfast])
-        include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
+        #include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
         print("functions loaded!")
 
 
@@ -174,7 +163,7 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
         ################################################################################################
         ## Optimization step in cuda
         chainMcu[:,:,:]=cu(chainM[:,:,indfast])
-        include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
+        #include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 
         ###############################################################################
@@ -226,7 +215,7 @@ names!(Resultspower,Symbol.(["bshare","TSGMMcueMC"]))
     ########
         Resultspower[ri,2]=TSMC
         Resultspower[ri,1]=bshare
-        CSV.write(diroutput*"/counter.good_$targetgood._price_$target._multiplier_$kap._cuda_start.$startit.end.$endit.rate.$rate.theta0.$theta0.csv",Resultspower)
+        CSV.write(diroutput*"/counter.good_$targetgood._price_$target._multiplier_$kap._cuda_start.$startit.end.$endit.theta0.$theta0.csv",Resultspower)
         GC.gc()
 
     end;
