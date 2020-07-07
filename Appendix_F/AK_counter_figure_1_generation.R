@@ -4,7 +4,7 @@ library("tikzDevice")
 require("ggplot2")
 library("hrbrthemes")
 
-filefigure="C:\\Users\\pegas\\Dropbox\\AKsource\\AKEDapp\\counter\\figures"
+filefigure="C:/Users/pegas/Documents/GitHub/ReplicationAK/Output_all/Appendix/figures"
 
 theta0str="0.975"
 ##Petrol good 10
@@ -15,7 +15,7 @@ multiplier=c("1.0","1.01","1.02","1.03","1.04","1.05","1.06","1.07","1.08","1.09
 
 
 for (i in 1:(simulations)){
-  file.alias=paste("C:/Users/pegas/Dropbox/AKsource/AKEDapp/counter/finalresults/counter_lancemachine.good_10._price_10._multiplier_",multiplier[i],"._cuda_start.0.04.end.0.06.rate.5.theta0.",theta0str,".csv",sep="")
+  file.alias=paste("C:/Users/pegas/Documents/GitHub/ReplicationAK/Output_all/Appendix/counter.good_10._price_10._multiplier_",multiplier[i],"._cuda_start.0.04.end.0.06.theta0.",theta0str,".csv",sep="")
   results[[i]]<- read.csv(file.alias)
 }
 
