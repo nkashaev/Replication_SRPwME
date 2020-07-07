@@ -263,7 +263,7 @@ Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TSGMMcueMC"]))
 Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
 
-CSV.write(diroutput*"/E1_IU_gamma_cuda_$theta0.chain_$nfast.csv",Results1)
+CSV.write(diroutput*"/E1_IU_TS_cuda_$theta0.chain_$nfast.csv",Results1)
 CSV.write(diroutput*"/E1_IU_gamma_cuda_$theta0.chain_$nfast.csv",Results1gamma)
 
 Results1
