@@ -144,7 +144,7 @@ end;
 
 ####################################################################################
 ###################################################################################
-function gchaincu!(d,gamma,cve,rho,chainM,bshare)
+function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W,bshare)
     dcu=cu(d)
     Deltac=zeros(n)
     Wc=ones(n,T,K)
@@ -188,26 +188,3 @@ function gchaincu!(d,gamma,cve,rho,chainM,bshare)
     end
 
 end
-
-
-
-
-
-# aiverify3=cu(zeros(n,T,T))
-# function verify(aiverify3,vsimccu,Deltaccu,cvesimccu,rhocu)
-#     for id=1:n
-#         for t=1:T
-#             for s=1:T
-#                 aiverify3[id,t,s]=vsimccu[id,t]-vsimccu[id,s]
-#                 for k=1:K
-#                     aiverify3[id,t,s]+=-CUDAnative.pow(Deltaccu[id]*1.0,-(t-1)*1.0)*rhocu[id,t,k]*(cvesimccu[id,t,k]-cvesimccu[id,s,k])
-#                 end
-#             end
-#         end
-#     end
-#     return nothing
-# end
-#
-# @cuda verify(aiverify3,vsimccu,Deltaccu,cvesimccu,rhocu)
-#
-# minimum(aiverify3)
