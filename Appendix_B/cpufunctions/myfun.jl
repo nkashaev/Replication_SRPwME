@@ -1,4 +1,4 @@
-@everywhere function myfun(;d=d,gamma=gamma,Delta=Delta,W=W,cve=cve,rho=rho)
+function myfun(;d=d,gamma=gamma,Delta=Delta,W=W,cve=cve,rho=rho)
 
     gvec=ones(n,T)
 

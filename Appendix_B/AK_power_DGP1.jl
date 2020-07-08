@@ -73,14 +73,14 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
     ## Setting-up directory
     tempdir1=@__DIR__
     repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
-    appname="Appendix_F"
+    appname="Appendix_B"
     rootdir=repdir*"/"*appname
     diroutput=repdir*"/Output_all/Appendix"
     dirdata=repdir*"/Data_all"
 
     ## data size
     # Sample size
-    n=2004
+    nold=2004
     # Number of time periods
     T=4
     # Number of goods
@@ -94,19 +94,19 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
     #Prices
     dum0=CSV.read(dirdata*"/pcouple.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T,K)
-    @eval  const ptemp=$dum0
+    dum0=reshape(dum0,nold,T,K)
+    ptemp=dum0
 
     ## Consumption
     dum0=CSV.read(dirdata*"/cvecouple.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
-    dum0=reshape(dum0,n,T,K)
-    @eval  const cvetemp=$dum0
+    dum0=reshape(dum0,nold,T,K)
+    cvetemp=dum0
 
     ## Interest rates
     dum0=CSV.read(dirdata*"/rvcouple.csv",datarow=2,allowmissing=:none)
     dum0=convert(Matrix,dum0[:,:])
-    @eval const rvtemp=$dum0.+1
+    rvtemp=dum0.+1
 
     ################################################################################
     ## Main functions loading and initialization
@@ -130,7 +130,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             Random.seed!(123*ri)
             indsim=rand(1:2004,n)
             p=ptemp[indsim,:,:]
-            rv=rvtemp[indsim,:,:]
+            rv=rvtemp[indsim,:]
 
 
 
@@ -252,14 +252,14 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-
+            W[:,:,:]=cve[:,:,:]-cvesim[:,:,:]
 
             minimum(aiverify2)
             print("warm start ready!")
 
             Random.seed!(123*ri)
             println(ri)
-            gchaincu!(theta0,gammav0,cve,rho,chainM)
+            gchaincu!(theta0,gammav0,cve,rho,chainM,Delta,vsim,cvesim,W)
             print("chain ready!")
 
 
@@ -270,14 +270,14 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             indfast=rand(1:repn[2],nfast)
             indfast[1]=1
             chainMcu[:,:,:]=cu(chainM[:,:,indfast])
-
+            numblocks = ceil(Int, n/100)
             include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
 
 
             ###############################################################################
             ###############################################################################
             Random.seed!(123)
-            res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
+            res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
 
 
             minr=best_fitness(res)

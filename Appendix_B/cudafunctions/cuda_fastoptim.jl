@@ -84,7 +84,7 @@ function objMCcu2(gamma0)
   valf[:]=0
   gamma=cu(gamma0)
 
-
+  numblocks = ceil(Int, n/100)
   @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     dvecM=Array(dvecM)*1.0
     dvec=sum(dvecM,dims=1)'/n
@@ -104,97 +104,4 @@ function objMCcu2(gamma0)
     Qn2=1/2*dvecdum2'*Omega2*dvecdum2
 
     return Qn2[1]
-end
-
-function objMCcu3(gamma01,gamma02,gamma03,gamma04)
-  gamma0=[gamma01 gamma02 gamma03 gamma04]
-  @inbounds geta[:]=0
-  @inbounds gtry[:]=0
-  @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
-  dvecM=cu(zeros(n,dg))
-  valf[:]=0
-  gamma=cu(gamma0)
-
-
-  @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-    dvecM=Array(dvecM)*1.0
-    dvec=sum(dvecM,dims=1)'/n
-
-
-    numvar=zeros(T,T)
-    @simd for i=1:n
-        BLAS.syr!('U',1.0/n,dvecM[i,:],numvar)
-    end
-    var=numvar+numvar'- Diagonal(diag(numvar))-dvec*dvec'
-    (Lambda,QM)=eigen(var)
-    inddummy=Lambda.>0
-    An=QM[:,inddummy]
-    dvecdum2=An'*(dvec)
-    vardum3=An'*var*An
-    Omega2=inv(vardum3)
-    Qn2=1/2*dvecdum2'*Omega2*dvecdum2
-
-    return Qn2[1]
-end
-################################################################################
-## Unweighted
-function objMCUWcu(gamma0::Vector, grad::Vector)
-  if length(grad) > 0
-  end
-  @inbounds geta[:]=0
-  @inbounds gtry[:]=0
-  @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
-  dvecM=cu(zeros(n,dg))
-  valf[:]=0
-  gamma=cu(gamma0)
-
-
-  @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-    dvecM=Array(dvecM)*1.0
-    dvec=sum(dvecM,dims=1)'/n
-
-    Qn2=1/2*dvec'*dvec
-
-    return Qn2[1]
-end
-
-
-
-
-
-function objMCUWcu2(gamma0)
-  @inbounds geta[:]=0
-  @inbounds gtry[:]=0
-  @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
-  dvecM=cu(zeros(n,dg))
-  valf[:]=0
-  gamma=cu(gamma0)
-
-
-  @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-    dvecM=Array(dvecM)*1.0
-    dvec=sum(dvecM,dims=1)'/n
-
-    Qn2=1/2*dvec'*dvec
-
-    return Qn2[1]
-end
-
-
-function objMCUWcu3(gamma0)
-  @inbounds geta[:]=0
-  @inbounds gtry[:]=0
-  @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
-  dvecM=cu(zeros(n,dg))
-  valf[:]=0
-  gamma=cu(gamma0)
-
-
-  @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-  return dvecM=Array(dvecM)*1.0
-
 end

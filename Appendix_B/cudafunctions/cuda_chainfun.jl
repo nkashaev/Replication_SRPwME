@@ -5,45 +5,6 @@ using CUDAdrv
 
 ##New delta function:
 ## desc: takes as arguments consistent values of vsim and cvesim, given observed rho, to generate  new consistent delta
-function new_deltacu!(d,vsim,cvesim,rho,Deltac,isim,unif1)
-    dmin=d
-    dmax=1
-
-    for t=2:T
-
-        for s=1:T
-            numer=0
-            for k=1:K
-                numer+=rho[isim,t,k]*(cvesim[isim,t,k]-cvesim[isim,s,k])
-            end
-
-            denom=@inbounds (vsim[isim,t]-vsim[isim,s])
-
-
-             if denom>0
-                val1=0<numer/denom ? numer/denom : 0.0
-                val1=CUDAnative.pow(val1*1.0,(1/(t-1))*1.0)
-                dmin=dmin<val1 ? val1 : dmin
-
-             end
-             if denom<0
-                 val1=0<numer/denom ? numer/denom : 0.0
-                 val1=CUDAnative.pow(val1*1.0,(1/(t-1))*1.0)
-                  dmax=dmax>val1 ? val1 : dmax
-             end
-        end
-
-
-  end
-
-
-  dmax=dmax>1 ? 1 : dmax
-  Deltac[isim]=dmax > dmin ? (unif1[isim]*(dmax-dmin)+dmin) : dmax
-  #Deltac[isim]=(unif1[isim]*(dmax-dmin)+dmin)
-  return nothing
-end
-
-## New delta
 function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
     dmin=d
     dmax=1
@@ -165,15 +126,6 @@ end
 #######################################################################################
 
 
-function jumpwrap!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,VC)
-    #unif1=curand(n).*(.9-.1).+.1
-    unif1=curand(n)
-    v=curandn(n,T,(K+1))
-    dVC=v./norm(v)
-    #unif2=curand(n).*(.9-.1).+.1
-    unif2=curand(n)
-    @cuda threads=250 jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
-end
 
 
 function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
@@ -193,7 +145,7 @@ end;
 
 ####################################################################################
 ###################################################################################
-function gchaincu!(d,gamma,cve,rho,chainM=chainM)
+function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W)
     dcu=cu(d)
     Deltac=zeros(n)
     Wc=ones(n,T,K)
@@ -238,26 +190,3 @@ function gchaincu!(d,gamma,cve,rho,chainM=chainM)
     end
 
 end
-
-
-
-
-
-# aiverify3=cu(zeros(n,T,T))
-# function verify(aiverify3,vsimccu,Deltaccu,cvesimccu,rhocu)
-#     for id=1:n
-#         for t=1:T
-#             for s=1:T
-#                 aiverify3[id,t,s]=vsimccu[id,t]-vsimccu[id,s]
-#                 for k=1:K
-#                     aiverify3[id,t,s]+=-CUDAnative.pow(Deltaccu[id]*1.0,-(t-1)*1.0)*rhocu[id,t,k]*(cvesimccu[id,t,k]-cvesimccu[id,s,k])
-#                 end
-#             end
-#         end
-#     end
-#     return nothing
-# end
-#
-# @cuda verify(aiverify3,vsimccu,Deltaccu,cvesimccu,rhocu)
-#
-# minimum(aiverify3)
