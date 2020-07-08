@@ -33,8 +33,35 @@ using ECOS
 
 using SoftGlobalScope
 
+###############################################################################
+## DGP1
+##
+# data size
+##seed
+const T=4
+const dg=4
 
-function powersimulations(chainM,chainMcu,theta0,n,repn)
+
+###############################################################################
+#Simulation sample size
+const n=2000
+
+## time length of the original data
+T0=4
+## number of goods
+const K=17
+#chain length
+const repn=(0,10000)
+
+chainM=zeros(n,dg,repn[2])
+const nfast=10000
+chainMcu=cu(chainM[:,:,1:nfast])
+
+theta0=1.0
+
+
+
+function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
 
 
@@ -93,7 +120,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn)
     include(rootdir*"/cudafunctions/cuda_chainfun.jl")
     ## optimization with CUDA
     numblocks = ceil(Int, n/100)
-    include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
+    include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
     print("functions loaded!")
 
 
@@ -140,9 +167,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn)
 
             cve=cve/1e5
 
-
-
-            ## Set Consumption, we initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
 
             print("load data ready!")
 
@@ -309,31 +333,5 @@ end
 
 
 
-###############################################################################
-## DGP1 
-##
-# data size
-##seed
-const T=4
-const dg=4
 
-
-###############################################################################
-#Simulation sample size
-const n=2000
-
-## time length of the original data
-T0=4
-## number of goods
-const K=17
-#chain length
-const repn=(0,10000)
-
-chainM=zeros(n,dg,repn[2])
-const nfast=10000
-chainMcu=cu(chainM[:,:,1:nfast])
-
-theta0=1.0
-
-dgp="dgp1"
-Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+Results=powersimulations(chainM,chainMcu,theta0,n,repn,nfast)

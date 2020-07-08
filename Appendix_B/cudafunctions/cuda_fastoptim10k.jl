@@ -15,7 +15,7 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
 
 
     for i=index:stride:n
-        for j=1:nfast
+        for j=1:10000
             valf[i]=0.0
             for t=1:T
                 gtry[i,t]=chainMcu[i,t,j]
@@ -25,7 +25,7 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
             for t=1:T
                 #geta[i,t]=logunif[i] < valf[1]-valf[2] ? gtry[i,t] : geta[i,t]
                 geta[i,t]=logunif[i,j] < valf[i] ? gtry[i,t] : geta[i,t]
-                dvecM[i,t]+=geta[i,t]/nfast
+                dvecM[i,t]+=geta[i,t]/10000
             end
         end
     end
