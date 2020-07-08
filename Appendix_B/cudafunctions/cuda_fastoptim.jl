@@ -49,6 +49,7 @@ function objMCcu(gamma0::Vector, grad::Vector)
   valf[:]=0
   gamma=cu(gamma0)
 
+  numblocks = ceil(Int, n/100)
 
   @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     dvecM=Array(dvecM)*1.0
