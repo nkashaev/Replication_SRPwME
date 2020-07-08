@@ -1,5 +1,6 @@
 #Reading the results of determnistic tests and reporting average rejection rates
-using CSV
+using CSV, DataFrames
+using Distributions
 
 tempdir1=@__DIR__
 repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
