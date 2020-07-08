@@ -1,4 +1,3 @@
-@@ -1,229 +0,0 @@
 ###Author: Victor H. Aguiar and Nail Kashaev
 ###email: vhaguiar@gmail.com
 ## Version: JULIA 1.1.0 (2019-01-21)

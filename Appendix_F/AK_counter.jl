@@ -289,7 +289,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
 
             Random.seed!(123)
             print(bshare)
-            gchaincu!(theta0,gammav0,cve,rho,chainM,bshare)
+            gchaincu!(theta0,gammav0,cve,rho,chainM,Delta,vsim,cvesim,W,bshare)
             print("chain ready!")
 
 
