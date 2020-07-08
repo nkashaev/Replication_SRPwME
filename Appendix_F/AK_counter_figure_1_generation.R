@@ -40,22 +40,22 @@ vec.mult=as.numeric(multiplier)
 price=c(vec.mult,vec.mult)
 shares=c(ubound,lbound)
 type=c(rep("upper bound",simulations),rep("lower bound",simulations))
-figdf=data.frame(type,price,shares)
+figdf=data.frame(type,price-1,shares)
 
-fig1=ggplot(figdf, aes(x=price, y=shares, group=type)) +
+fig1=ggplot(figdf, aes(x=price-1, y=shares, group=type)) +
   geom_line(aes(linetype=type))+
   geom_point()+
   scale_linetype_manual(values=c("twodash", "dotted"))
 fig1
-fig1 +labs(x="price multiplier")+ theme_minimal()
+fig1 +labs(x=expression(kappa),y=expression(theta[pet]))+ theme_minimal()
 
-pdf(paste(filefigure,"\\good_10_price_10_2020_01_08_horizontal_",theta0str,"_minimal.pdf",sep=""),width =10,height =2)
-myplot <- fig1 +labs(x="price multiplier") + theme_minimal()
+pdf(paste(filefigure,"\\fig1_",theta0str,"_minimal.pdf",sep=""),width =10,height =2)
+myplot <- fig1 +labs(x=expression(kappa),y=expression(theta[pet])) + theme_minimal()
 print(myplot)
 dev.off()
 
-tikz(paste(filefigure,"\\good_10_price_10_2020_01_08_horizontal_",theta0str,"_minimal.tex",sep=""),width =10,height =2)
-myplot <- fig1+ labs(x="price multiplier")+ theme_minimal()
+tikz(paste(filefigure,"\\fig1_",theta0str,"_minimal.tex",sep=""),width =10,height =2)
+myplot <- fig1+ labs(x=expression(kappa),y=expression(theta[pet]))+ theme_minimal()
 print(myplot)
 dev.off()
 
