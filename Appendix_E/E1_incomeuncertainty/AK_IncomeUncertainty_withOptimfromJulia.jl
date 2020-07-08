@@ -128,26 +128,45 @@ GC.gc()
 chainMcu=cu(chainMnew)
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
-################################################################################################
-## This initial gamma was the product of a brute force search
+
+###############################################################################
+###############################################################################
+## BlackBox Optimization warm-start
+# Random.seed!(123)
+# res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 1000.0, TraceMode=:silent)
+#
+#
+# minr=best_fitness(res)
+# TSMC=2*minr*n
+# TSMC
+# guessgamma=best_candidate(res)
+
+toluser=1e-6
 trygamma=[-0.021066491;-0.131420248;-0.176570465;-0.061012596;59.08582226;42.73604072;19.77651024]
 Random.seed!(123)
 guessgamma=trygamma
-
-opt=NLopt.Opt(:LN_BOBYQA,dg)
-toluser=0.0
-NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-NLopt.upper_bounds!(opt,ones(dg).*Inf)
-NLopt.xtol_rel!(opt,toluser)
-NLopt.xtol_abs!(opt,toluser)
-NLopt.min_objective!(opt,objMCcu)
-(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+x0=trygamma
+res=Optim.optimize(objMCcu2c, x0, NelderMead(),Optim.Options(x_tol=toluser,f_tol=toluser))
+minf=Optim.minimum(res)
+minx=Optim.minimizer(res)
 TSMC=2*minf*n
+solvegamma=minx
 println(TSMC)
 
-solvegamma=minx
-guessgamma=solvegamma
-ret
+# opt=NLopt.Opt(:LN_BOBYQA,dg)
+# toluser=1e-24
+# NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+# NLopt.upper_bounds!(opt,ones(dg).*Inf)
+# NLopt.xtol_rel!(opt,toluser)
+# NLopt.xtol_abs!(opt,toluser)
+# NLopt.min_objective!(opt,objMCcu)
+# (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+# TSMC=2*minf*n
+# println(TSMC)
+#
+# solvegamma=minx
+# guessgamma=solvegamma
+# ret
 
 
 
