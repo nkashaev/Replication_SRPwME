@@ -299,6 +299,8 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             TSMC=2*minf*n
             TSMC
             solvegamma=minx
+            print(TSMC)
+
             guessgamma=solvegamma
             ret
             ##try 2
