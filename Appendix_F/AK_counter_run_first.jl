@@ -66,13 +66,13 @@ const repn=(0,10000)
 #Prices
 dum0=CSV.read(dirdata*"/p.csv",datarow=2,allowmissing=:none)
 dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T,K)
+dum0=reshape(dum0,n,T0,K)
 @eval  const p=$dum0
 
 ## Consumption
 dum0=CSV.read(dirdata*"/cve.csv",datarow=2,allowmissing=:none)
 dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T,K)
+dum0=reshape(dum0,n,T0,K)
 @eval  const cve=$dum0
 
 ## Interest rates
@@ -83,7 +83,7 @@ dum0=convert(Matrix,dum0[:,:])
 ## Discounted prices
 rho=zeros(n,T,K)
 for i=1:n
-  for t=1:T
+  for t=1:T0
     rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
   end
 end
@@ -194,23 +194,22 @@ solvegamma=minx
 guessgamma=solvegamma
 ret
 ##try 2
-if (TSMC>=9)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-end
+
+(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+TSMC=2*minf*n
+TSMC
+solvegamma=minx
+guessgamma=solvegamma
+ret
+
 #try 3
-if (TSMC>=9)
-    (minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
-    TSMC=2*minf*n
-    TSMC
-    solvegamma=minx
-    guessgamma=solvegamma
-    ret
-end
+
+(minf,minx,ret) = NLopt.optimize!(opt, guessgamma)
+TSMC=2*minf*n
+TSMC
+solvegamma=minx
+guessgamma=solvegamma
+ret
 
 #############################################################
 ############################################
@@ -224,8 +223,6 @@ TSMC
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TSGMMcueMC"]))
 Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
-CSV.write(diroutput*"/results_TS_cuda_$theta0.csv",Results1)
-CSV.write(diroutput*"/results_gamma_cuda_$theta0.csv",Results1gamma)
 
 Results1
 
