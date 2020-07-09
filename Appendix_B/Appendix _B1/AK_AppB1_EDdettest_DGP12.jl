@@ -42,6 +42,7 @@ for ri=1:npower
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower1[ri,1]=ri; Resultspower1[ri,2]=rate;
     CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower1)
+    GC.gc()
     ## DGP2
     dlow=1.0
     rho, cve=dgp12(ri,dlow,n,RRho)
@@ -50,6 +51,7 @@ for ri=1:npower
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower2[ri,1]=ri; Resultspower2[ri,2]=rate;
     CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower2)
+    GC.gc()
 end
 ## Combining the results
 Results[1,2]=sum(Resultspower1[:,2])/npower
