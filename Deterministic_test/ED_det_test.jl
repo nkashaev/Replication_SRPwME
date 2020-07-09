@@ -1,6 +1,6 @@
 function det_test_app(rho,cve,stepdum)
-    n=size(rho,1)
-    ind=100
+    n,T,K=size(rho)
+    ind=1
     q=cve[ind,:,:]'
     sol = linprog([-1,0],[2 1],'<',1.5, ClpSolver())
     solsuccess=sol.status

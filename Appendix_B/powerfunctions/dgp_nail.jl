@@ -42,13 +42,13 @@ adum=0.97; bdum=1.03;
 epsilon=rand(n,T,K)*(bdum-adum) .+ adum
 #Consumption
 cve=zeros(n,T,K)
-@simd for i=1:n, t=1:T, k=1:K
+for i=1:n, t=1:T, k=1:K
        rhoadum=mu[i,t,k]*rho[i,t,k]
        rhobdum=rho[i,t,k]-rhoadum
        cvea=((lambda[i]/deltasima[i]^(t-1))*rhoadum).^(-1/sigma[i,k])
        cveb=((lambdab[i]/deltasimb[i]^(t-1))*rhobdum).^(-1/sigmab[i,k])
        cve[i,t,k]=  (cvea+cveb)*epsilon[i,t,k]
-     end
+end
 
 return rho, cve/1e7
 end
