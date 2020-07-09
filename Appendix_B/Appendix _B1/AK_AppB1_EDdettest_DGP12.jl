@@ -14,9 +14,9 @@ diroutput=repdir*"/Output_all/Appendix"
 dirdata=repdir*"/Data_all"
 ################################################################################
 ## Parameters
-npower=1000
-stepdum=.05
-n=2000 #Sample size of the generated sample
+npower=1000 #Number of MC replications
+stepdum=.05 # d in [0.1:stepdum:1]
+n=2000      #Sample size of the generated sample
 ## Functions
 include(rootdir*"/powerfunctions/dgp_nail.jl") #Functions that generate the data
 include(repdir*"/Deterministic_test/ED_det_test.jl") # ED deterministic test function
