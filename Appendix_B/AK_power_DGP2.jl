@@ -145,9 +145,9 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             rhoold=rho
 
             ###########################################################################################
-            ## Data generation DGP1
+            ## Data generation DGP2
             cve=zeros(n,T,K)
-            dlow=.8
+            dlow=1.0
             deltasim=rand(n).*(1-dlow).+dlow
             lambda=randexp(n)/1
             su=100
@@ -166,6 +166,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
              end
 
             cve=cve/1e5
+
 
 
             print("load data ready!")
@@ -325,15 +326,13 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/B_power_dgp2_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 
     end;
     Resultspower
 end
-
-
 
 
 try
