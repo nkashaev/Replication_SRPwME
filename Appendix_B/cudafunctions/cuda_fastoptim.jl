@@ -20,10 +20,8 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
             for t=1:T
                 gtry[i,t]=chainMcu[i,t,j]
                 valf[i]+=gtry[i,t]*gamma[t]-geta[i,t]*gamma[t]
-                #valf[2]+=CUDAnative.pow(geta[i,t]*1.0,2.0)-CUDAnative.pow(gtry[i,t]*1.0,2.0)
             end
             for t=1:T
-                #geta[i,t]=logunif[i] < valf[1]-valf[2] ? gtry[i,t] : geta[i,t]
                 geta[i,t]=logunif[i,j] < valf[i] ? gtry[i,t] : geta[i,t]
                 dvecM[i,t]+=geta[i,t]/nfast
             end
@@ -32,10 +30,6 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     return nothing
 end
 
-# numblocks = ceil(Int, n/167)
-# @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-#
-# print("")
 
 
 function objMCcu(gamma0::Vector, grad::Vector)
