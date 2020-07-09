@@ -358,4 +358,9 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
     Resultspower
 end
 
-Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+try
+    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+catch
+    @warn "Cuda needs a second run."
+    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+end
