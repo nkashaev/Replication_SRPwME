@@ -24,6 +24,7 @@ rate_singles=det_test_app(rho,cve,stepdum) # Testing
 ## Testing couples
 rho,cve=ED_data_load(dirdata,"couples") # Data loading
 rate_couples=det_test_app(rho,cve,stepdum) # Testing
+
 ## Combining results
 Results=DataFrame(hcat(["Singles";"Couples"],[rate_singles; rate_couples]))
 rename!(Results,Symbol.(["Households","RejRate"]))
