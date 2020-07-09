@@ -39,7 +39,7 @@ for ri=1:npower
     rho, cve=dgp12(ri,dlow,n,RRho)
     cve=cve*1e5
     # Testing DGP 1
-    rate=det_test_app(rho,cve,stepdum) # Rejection Rate
+    rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower1[ri,1]=ri; Resultspower1[ri,2]=rate;
     CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower1)
     GC.gc()
@@ -48,7 +48,7 @@ for ri=1:npower
     rho, cve=dgp12(ri,dlow,n,RRho)
     cve=cve*1e5
     # Testing DGP 2
-    rate=det_test_app(rho,cve,stepdum) # Rejection Rate
+    rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower2[ri,1]=ri; Resultspower2[ri,2]=rate;
     CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower2)
     GC.gc()

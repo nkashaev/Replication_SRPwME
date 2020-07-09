@@ -1,4 +1,4 @@
-function det_test_app(rho,cve,stepdum)
+function ED_det_test(rho,cve,stepdum)
     n,T,K=size(rho)
     ind=1
     q=cve[ind,:,:]'

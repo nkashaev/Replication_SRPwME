@@ -19,7 +19,7 @@ include(repdir*"/Deterministic_test/ED_data_load.jl") # Function that loads the 
 ################################################################################
 ## Testing singles
 rho,cve=ED_data_load(dirdata,"singles") # Data loading
-rate_singles=det_test_app(rho,cve,stepdum) # Testing
+rate_singles=ED_det_test(rho,cve,stepdum) # Testing
 
 ## Testing couples
 rho,cve=ED_data_load(dirdata,"couples") # Data loading
