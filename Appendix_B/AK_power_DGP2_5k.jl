@@ -51,13 +51,13 @@ T0=4
 ## number of goods
 const K=17
 #chain length
-const repn=(0,10000)
+const repn=(0,5000)
 
 chainM=zeros(n,dg,repn[2])
-const nfast=10000
+const nfast=5000
 chainMcu=cu(chainM[:,:,1:nfast])
 
-theta0=.8
+theta0=1.0
 
 
 
@@ -145,9 +145,9 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             rhoold=rho
 
             ###########################################################################################
-            ## Data generation DGP1
+            ## Data generation DGP2
             cve=zeros(n,T,K)
-            dlow=.8
+            dlow=1.0
             deltasim=rand(n).*(1-dlow).+dlow
             lambda=randexp(n)/1
             su=100
@@ -168,6 +168,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             cve=cve/1e5
 
 
+
             print("load data ready!")
 
 
@@ -184,7 +185,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             #####################################################################################
             ## warmstart
-            deltavec=[1.0]
+            deltavec=theta0<1 ? [0 .5  1]*(1-theta0).+theta0 : [1]
             ndelta=length(deltavec)
 
             Delta=zeros(n)
@@ -288,56 +289,50 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             ###############################################################################
             ###############################################################################
 
-            if (TSMC>=9.5)
-                opt=NLopt.Opt(:LN_BOBYQA,dg)
-                toluser=1e-6
-                NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-                NLopt.upper_bounds!(opt,ones(dg).*Inf)
-                NLopt.xtol_rel!(opt,toluser)
-                NLopt.min_objective!(opt,objMCcu)
-                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-                TSMC=2*minf*n
-                TSMC
-                solvegamma=minx
-                print(ret)
 
-                guessgamma=solvegamma
-                ret
-            end
-            if (TSMC>=9.5)
-                ##try 2
+            opt=NLopt.Opt(:LN_BOBYQA,dg)
+            toluser=1e-6
+            NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+            NLopt.upper_bounds!(opt,ones(dg).*Inf)
+            NLopt.xtol_rel!(opt,toluser)
+            NLopt.min_objective!(opt,objMCcu)
+            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+            TSMC=2*minf*n
+            TSMC
+            solvegamma=minx
+            print(ret)
 
-                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-                TSMC=2*minf*n
-                TSMC
-                solvegamma=minx
-                guessgamma=solvegamma
-                ret
-            end
+            guessgamma=solvegamma
+            ret
+            ##try 2
+
+            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+            TSMC=2*minf*n
+            TSMC
+            solvegamma=minx
+            guessgamma=solvegamma
+            ret
 
             #try 3
-            if (TSMC>= 9.5)
-                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-                TSMC=2*minf*n
-                TSMC
-                solvegamma=minx
-                guessgamma=solvegamma
-                ret
-            end 
+
+            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+            TSMC=2*minf*n
+            TSMC
+            solvegamma=minx
+            guessgamma=solvegamma
+            ret
 
 
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/B_power_dgp2_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 
     end;
     Resultspower
 end
-
-
 
 
 try

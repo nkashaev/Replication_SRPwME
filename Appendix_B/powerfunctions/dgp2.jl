@@ -1,7 +1,6 @@
 dlow=1.0
 deltasim=rand(n).*(1-dlow).+dlow
 lambda=randexp(n)/1
-psit=hcat(hcat(ones(n).*2,ones(n).*1),hcat(ones(n).*2,ones(n).*1))
 su=100
 sl=1/15
 sigma=rand(n,K)*(su-sl) .+ sl
