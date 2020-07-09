@@ -57,7 +57,7 @@ chainM=zeros(n,dg,repn[2])
 const nfast=10000
 chainMcu=cu(chainM[:,:,1:nfast])
 
-theta0=1.0
+theta0=.8
 
 
 
@@ -184,7 +184,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             #####################################################################################
             ## warmstart
-            deltavec=theta0<1 ? [0 .5  1]*(1-theta0).+theta0 : [1]
+            deltavec=[1.0]
             ndelta=length(deltavec)
 
             Delta=zeros(n)
@@ -288,38 +288,42 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             ###############################################################################
             ###############################################################################
 
+            if (TSMC>=9.5)
+                opt=NLopt.Opt(:LN_BOBYQA,dg)
+                toluser=1e-6
+                NLopt.lower_bounds!(opt,ones(dg).*-Inf)
+                NLopt.upper_bounds!(opt,ones(dg).*Inf)
+                NLopt.xtol_rel!(opt,toluser)
+                NLopt.min_objective!(opt,objMCcu)
+                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+                TSMC=2*minf*n
+                TSMC
+                solvegamma=minx
+                print(ret)
 
-            opt=NLopt.Opt(:LN_BOBYQA,dg)
-            toluser=1e-6
-            NLopt.lower_bounds!(opt,ones(dg).*-Inf)
-            NLopt.upper_bounds!(opt,ones(dg).*Inf)
-            NLopt.xtol_rel!(opt,toluser)
-            NLopt.min_objective!(opt,objMCcu)
-            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-            TSMC=2*minf*n
-            TSMC
-            solvegamma=minx
-            print(ret)
+                guessgamma=solvegamma
+                ret
+            end
+            if (TSMC>=9.5)
+                ##try 2
 
-            guessgamma=solvegamma
-            ret
-            ##try 2
-
-            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-            TSMC=2*minf*n
-            TSMC
-            solvegamma=minx
-            guessgamma=solvegamma
-            ret
+                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+                TSMC=2*minf*n
+                TSMC
+                solvegamma=minx
+                guessgamma=solvegamma
+                ret
+            end
 
             #try 3
-
-            (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-            TSMC=2*minf*n
-            TSMC
-            solvegamma=minx
-            guessgamma=solvegamma
-            ret
+            if (TSMC>= 9.5)
+                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+                TSMC=2*minf*n
+                TSMC
+                solvegamma=minx
+                guessgamma=solvegamma
+                ret
+            end 
 
 
         ########
