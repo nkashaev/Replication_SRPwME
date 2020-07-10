@@ -4,7 +4,7 @@ geta=cu(ones(n,dg))
 gtry=cu(ones(n,dg))
 @inbounds geta[:,:]=chainMcu[:,:,1]
 dvecM=cu(zeros(n,dg))
-logunif=log.(curand(n,nfast))
+logunif=log.(CuArrays.rand(n,nfast))
 gamma=cu(ones(dg))
 valf=cu(zeros(n))
 
@@ -38,7 +38,7 @@ function objMCcu(gamma0::Vector, grad::Vector)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
+  @inbounds logunif[:]=log.(CuArrays.rand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
   gamma=cu(gamma0)
@@ -74,7 +74,7 @@ function objMCcu2(gamma0)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
+  @inbounds logunif[:]=log.(CuArrays.rand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
   gamma=cu(gamma0)
