@@ -37,7 +37,6 @@ for ri=1:npower
     # DGP1
     dlow=0.8
     rho, cve=dgp12(ri,dlow,n,RRho)
-    cve=cve*1e5
     # Testing DGP 1
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower1[ri,1]=ri; Resultspower1[ri,2]=rate;
@@ -46,7 +45,6 @@ for ri=1:npower
     ## DGP2
     dlow=1.0
     rho, cve=dgp12(ri,dlow,n,RRho)
-    cve=cve*1e5
     # Testing DGP 2
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower2[ri,1]=ri; Resultspower2[ri,2]=rate;
