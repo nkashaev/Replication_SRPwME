@@ -149,7 +149,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             cve=zeros(n,T,K)
             dlow=.8
             deltasim=rand(n).*(1-dlow).+dlow
-            lambda=randexp(n)/3
+            lambda=randexp(n)
             su=100
             sl=1/15
             sigma=rand(n,K)*(su-sl) .+ sl
@@ -165,7 +165,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
 
-            #cve=cve/1e5
+            cve=cve/1e3
 
 
             print("load data ready!")
