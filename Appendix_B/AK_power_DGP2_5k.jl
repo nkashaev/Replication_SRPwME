@@ -149,7 +149,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             cve=zeros(n,T,K)
             dlow=1.0
             deltasim=rand(n).*(1-dlow).+dlow
-            lambda=randexp(n)/1
+            lambda=randexp(n)/10
             su=100
             sl=1/15
             sigma=rand(n,K)*(su-sl) .+ sl
@@ -325,15 +325,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 ret
             end
 
-            #try 4
-            if (TSMC>= 9.5)
-                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-                TSMC=2*minf*n
-                TSMC
-                solvegamma=minx
-                guessgamma=solvegamma
-                ret
-            end
+    
 
 
         ########
