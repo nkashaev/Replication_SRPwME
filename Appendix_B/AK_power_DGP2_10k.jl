@@ -184,7 +184,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             #####################################################################################
             ## warmstart
-            deltavec=[.8]
+            deltavec=[1.0]
             ndelta=length(deltavec)
 
             Delta=zeros(n)
