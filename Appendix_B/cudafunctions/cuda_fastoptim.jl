@@ -56,7 +56,7 @@ function objMCcu(gamma0::Vector, grad::Vector)
     end
     var=numvar+numvar'- Diagonal(diag(numvar))-dvec*dvec'
     (Lambda,QM)=eigen(var)
-    inddummy=Lambda.>1e-4
+    inddummy=Lambda.>1e-6
     An=QM[:,inddummy]
     dvecdum2=An'*(dvec)
     vardum3=An'*var*An
@@ -91,7 +91,7 @@ function objMCcu2(gamma0)
     end
     var=numvar+numvar'- Diagonal(diag(numvar))-dvec*dvec'
     (Lambda,QM)=eigen(var)
-    inddummy=Lambda.>1e-4
+    inddummy=Lambda.>1e-6
     An=QM[:,inddummy]
     dvecdum2=An'*(dvec)
     vardum3=An'*var*An
