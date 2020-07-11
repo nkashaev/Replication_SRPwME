@@ -165,7 +165,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
 
-            cve=cve/1e5
+            #cve=cve/1e5
 
 
             print("load data ready!")
