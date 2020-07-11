@@ -57,7 +57,7 @@ chainM=zeros(n,dg,repn[2])
 const nfast=10000
 chainMcu=cu(chainM[:,:,1:nfast])
 
-theta0=1.0
+theta0=.1
 
 
 
@@ -145,27 +145,45 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             rhoold=rho
 
             ###########################################################################################
-            ## Data generation DGP2
+            ## Data generation DGP1
             cve=zeros(n,T,K)
-            dlow=1.0
-            deltasim=rand(n).*(1-dlow).+dlow
-            lambda=randexp(n)
+            dlowa=.1
+            deltasima=rand(n).*(1-dlowa).+dlowa
+            dlowb=.99
+            dhighb=1.0
+            deltasimb=rand(n).*(dhighb-dlowb).+dlowb
+            lambda=randexp(n)/1
+            lambdab=randexp(n)/1
+            #### Pareto Weights
+            mulo=1/2
+            muhi=1/2
+            mu=rand(n,T,K).*(muhi-mulo).+mulo
             su=100
             sl=1/15
             sigma=rand(n,K)*(su-sl) .+ sl
-            ##Multiplicative Error
+            sigmab=rand(n,K)*(su-sl) .+ sl
+
+            ##
             adum=0.97
             bdum=1.03
             epsilon=adum .+ rand(n,T,K)*(bdum-adum)
             @simd for i=1:n
                for t=1:T
                  for k=1:K
-                   cve[i,t,k]= ((lambda[i]/deltasim[i]^(t-1))*rho[i,t,k]).^(-1/sigma[i,k])*epsilon[i,t,k]
+
+
+                   rhoadum=mu[i,t,k]*rhoold[i,t,k]
+                   rhobdum=rhoold[i,t,k]-rhoadum
+                   cvea=((lambda[i]/deltasima[i]^(t-1))*rhoadum).^(-1/sigma[i,k])
+                   cveb=((lambdab[i]/deltasimb[i]^(t-1))*rhobdum).^(-1/sigmab[i,k])
+
+                   cve[i,t,k]=  (cvea+cveb)*epsilon[i,t,k]
+                   rho[i,t,k]=rhoadum+rhobdum
                  end
                end
              end
 
-            cve=cve/1e3
+            cve=cve/1e7
 
 
             print("load data ready!")
@@ -184,7 +202,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             #####################################################################################
             ## warmstart
-            deltavec=[1.0]
+            deltavec=theta0<1 ? [0 .5  1]*(1-theta0).+theta0 : [1]
             ndelta=length(deltavec)
 
             Delta=zeros(n)
@@ -327,10 +345,11 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
 
 
+
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/B_power_dgp2_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 
