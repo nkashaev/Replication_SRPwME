@@ -325,15 +325,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 ret
             end
 
-            #try 4
-            if (TSMC>= 9.5)
-                (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
-                TSMC=2*minf*n
-                TSMC
-                solvegamma=minx
-                guessgamma=solvegamma
-                ret
-            end
+    
 
 
         ########
