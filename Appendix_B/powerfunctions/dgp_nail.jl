@@ -16,7 +16,7 @@ cve=zeros(n,T,K)
 for i=1:n, t=1:T, k=1:K
       cve[i,t,k]= ((lambda[i]/deltasim[i]^(t-1))*rho[i,t,k]).^(-1/sigma[i,k])*epsilon[i,t,k]
 end
-return rho, cve/1e5
+return rho, cve
 end
 
 
