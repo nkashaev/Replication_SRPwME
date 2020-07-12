@@ -194,7 +194,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             ###########################################
 
-            Random.seed!(123)
+            Random.seed!(123*ri)
             gammav0=zeros(dg)
 
 
@@ -294,7 +294,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             ###############################################################################
             ###############################################################################
-            Random.seed!(123)
+            Random.seed!(123*ri)
             res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
 
 
@@ -349,7 +349,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/power_dgp3_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 

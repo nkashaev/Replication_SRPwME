@@ -176,7 +176,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             ###########################################
 
-            Random.seed!(123)
+            Random.seed!(123*ri)
             gammav0=zeros(dg)
 
 
@@ -276,7 +276,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             ###############################################################################
             ###############################################################################
-            Random.seed!(123)
+            Random.seed!(123*ri)
             res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
 
 
