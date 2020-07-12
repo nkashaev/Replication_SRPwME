@@ -183,7 +183,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
 
-            cve=cve/1e7
+            #cve=cve/1e7
 
 
             print("load data ready!")
@@ -349,7 +349,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/power_dgp3_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 
