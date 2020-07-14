@@ -252,7 +252,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-            #W[:,:,:]=cve[:,:,:]-cvesim[:,:,:]
 
             minimum(aiverify2)
             print("warm start ready!")

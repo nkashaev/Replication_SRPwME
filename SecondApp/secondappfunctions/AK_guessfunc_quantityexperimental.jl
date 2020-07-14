@@ -1,3 +1,10 @@
+#Guessfun: gives the initial draw of the Montecarlo step, must be a simulations consistent with the null.
+## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of c^* that satisfies GARP and in on the budget line.
+## The function allows to set an afriatpar that corresponds to the cost efficiency index. We set it to 1.
+#maxit is the max. number of iterations allowed by the sampler before it restarts.
+#R has to get a random seed.
+# cvesim is filled by simulated consumption.
+
 @everywhere function guessfun(;d=d::Float64,gamma=gamma::Float64,cve=cve::Float64,rho=rho::Float64)
     nobs=T
     ngoods=K
