@@ -10,7 +10,9 @@ addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
 # Set a random seed
-@everywhere Random.seed!(3000)
+@distributed for replicate_idx=1:nprocs
+  Random.seed!(3000*replicate_idx)
+end
 @everywhere using NLopt
 @everywhere using DataFrames
 @everywhere using MathProgBase

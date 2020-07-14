@@ -4,13 +4,15 @@
 
 count = 0
 #Set the number of processors: Change it to the max the computer allows
-nprocs=20
+nprocs=30
 using Distributed
 addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
 # Set a random seed
-@everywhere Random.seed!(3000)
+@distributed for replicate_idx=1:nprocs
+  Random.seed!(3000*replicate_idx)
+end
 @everywhere using NLopt
 @everywhere using DataFrames
 @everywhere using MathProgBase
@@ -47,7 +49,7 @@ end
 ## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
 # set burn, if needed
 burnrate=0
-nsimsp=29
+nsimsp=30
 @everywhere const repn=($burnrate,$nsimsp)
 nsims=nsimsp*nprocs
 ## Define the constant number of proccesors
@@ -288,6 +290,6 @@ results=hcat(solvw[1,:],solvwgamma[1,:,:])
 #########################################################################
 ## Export
 DFsolv=convert(DataFrame,results)
-CSV.write(dirresults*"//AK_Footnote_57_experimental_trembling_hand_reps_580.csv",DFsolv)
+CSV.write(dirresults*"//AK_Footnote_57_experimental_trembling_hand_reps_900.csv",DFsolv)
 ##########################################################################
 ##########################################################################
