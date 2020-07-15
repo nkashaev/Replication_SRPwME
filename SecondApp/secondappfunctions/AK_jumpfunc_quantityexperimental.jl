@@ -1,4 +1,9 @@
 ###############################################################
+## jumpfun: Experimental Trembling Hand
+## This function will draw new candidates for the Montecarlo, in this case this is the same as the guessfun.
+## The reason is that in this case, we can generate exactly data under the null of GARP plus being on the budget, in others words this is rejection sampling.
+
+###############################################################
 ## New Fast jump
 @everywhere function jumpfun(;d=d::Float64,gamma=gamma::Float64,cve=cve::Float64,rho=rho::Float64)
     nobs=T

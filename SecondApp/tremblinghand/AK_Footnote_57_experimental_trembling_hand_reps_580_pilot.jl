@@ -4,53 +4,61 @@
 
 count = 0
 #Set the number of processors: Change it to the max the computer allows
-nprocs=30
+nprocs=20
 using Distributed
 addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
 # Set a random seed
-@everywhere Random.seed!(3000)
+@distributed for replicate_idx=1:nprocs
+  Random.seed!(3000*replicate_idx)
+end
 @everywhere using NLopt
 @everywhere using DataFrames
 @everywhere using MathProgBase
 using CSV
-##the following line is eliminated in case the installation of Rcall happened correctly and there is only 1 installation of R
-#@everywhere ENV["R_HOME"]="C:\\Users\\Nkashaev\\Documents\\R\\R-3.4.4"
+
 
 @everywhere using RCall
 @everywhere using LinearAlgebra
-## Setting-up directory
-repdir="C:/Users/vaguiar/Dropbox/ReplicationAK" # To run replication code on a different machine change the path
-appname="SecondApp_N"
-rootdir=repdir*"/"*appname
-diroutput=repdir*"/Output_all"
-dirdata=repdir*"/Data_all"
+## set directory
+machine="niagara"
+if machine=="niagara"
+  rootdir="/gpfs/fs1/home/v/vaguiar/vaguiar/ReplicationAK/SecondApp"
+  dir=rootdir*"/data"
+  dirresults="/gpfs/fs0/scratch/v/vaguiar/vaguiar/results"
+end
+#results file
+if machine=="nailmachine"
+  ##the following line is eliminated in case the installation of Rcall happened correctly and there is only 1 installation of R
+  @everywhere ENV["R_HOME"]="C:\\Users\\Nkashaev\\Documents\\R\\R-3.4.4"
+  rootdir="C:/Users/Nkashaev/Dropbox/ReplicationAK/SecondApp"
+  dir=rootdir*"/data"
+  dirresults=rootdir*"/results"
+end
 
-################################################################################
-## data size
-# Sample size
-@everywhere n=154
+# data size
+@everywhere  n=154
 
-# Number of time periods
+## time length
 @everywhere const T=50
-
-#  Number of goods
+#@everywhere const T=4
+## number of goods
 @everywhere const K=3
-
-## repetitions for the simulation
-# because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-# set burn
+# repetitions for effective rejection sampling
+## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
+# set burn, if needed
 burnrate=0
-nsimsp=30
+nsimsp=29
 @everywhere const repn=($burnrate,$nsimsp)
 nsims=nsimsp*nprocs
 ## Define the constant number of proccesors
 const nprocs0=nprocs
 
 
-## Data
-dum0=CSV.read(dirdata*"/rationalitydata3goods.csv")
+# read csv files prepared in R from the original data in Ahn et al.
+# prices array
+dum0=CSV.read(dir*"/rationalitydata3goods.csv")
 # break the dataset into subdatasets by individual
 splitdum0=groupby(dum0,:id)
 @eval @everywhere splitp=$splitdum0
@@ -62,16 +70,18 @@ splitdum0=groupby(dum0,:id)
 
 #Fill the arrays
 # Columns 10-12 correspond to prices
-# Columns 4-6 correspond to consumption
+# Columns 4:6 correspond to consumption bundles
 @everywhere for i=1:n
     dum0=convert(Array,splitp[i])
     rho[i,:,:]=dum0[1:T,10:12]
     cve[i,:,:]=dum0[1:T,4:6]
 end
 
+
 ################################################################
-## Output for simulations parameters
-@everywhere dg=T*K # Number of measurement-error moments
+##Output for simulations parameters
+# Number of centering moments w^p\in R^(T*K)
+@everywhere dg=T*K
 @everywhere nsims=1
 @everywhere ndelta=1
 @everywhere solv=zeros(nsims,ndelta)
@@ -98,10 +108,14 @@ results=hcat(solv[1,:],solvw[1,:],solvgamma[1,:,:],solvwgamma[1,:,:])
 #cve.- consumption array
 #rho.- effective price array
 
-## AK_myfunc_gabaix.jl tests for E[w^p]=0
-include(rootdir*"/secondappfunctions/AK_myfunc_gabaix.jl")
+## myfunc_gabaix.jl tests for E[w^p]=0 or E[p^*]=E[p].
+#@everywhere include($rootdir*"/AK_myfunc_gabaix.jl")
 
-## New Guess Functions: Constraint to satisfy pw=0 as.
+## AK_myfunc_tremblinghand.jl tests for E[w^c]=0 or E[c^*]=E[c].
+include(rootdir*"/secondappfunctions/AK_myfunc_tremblinghand.jl")
+
+
+##New Guess Functions: Constraint to satisfy pw=0 as.
 @everywhere m=zeros(n,T)
 @everywhere mrep=zeros(n,T,K)
 @everywhere msim=zeros(n,T)
@@ -121,12 +135,7 @@ end
 
 #Guessfun: gives the initial draw of the Montecarlo step, must be a simulations consistent with the null.
 
-## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of p^* that satisfies GARP and in on the budget line.
-## The function allows to set an afriatpar that corresponds to the cost efficiency index. We set it to 1.
-#maxit is the max. number of iterations allowed by the sampler before it restarts.
-#R has to get a random seed.
 
-include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 
 
 ## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of p^* that satisfies GARP and in on the budget line.
@@ -134,7 +143,7 @@ include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 #maxit is the max. number of iterations allowed by the sampler before it restarts.
 #R has to get a random seed.
 #Do not pay attention to the name of the files cvesim since it does not matter, in this case it is filled by prices
-#include(rootdir*"/AK_guessfunc_quantityexperimental.jl")
+include(rootdir*"/secondappfunctions/AK_guessfunc_quantityexperimental.jl")
 
 
 
@@ -143,11 +152,9 @@ include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 ## This function will draw new candidates for the Montecarlo, in this case this is the same as the guessfun.
 ## The reason is that in this case, we can generate exactly data under the null of GARP plus being on the budget.
 
-## For prices
-include(rootdir*"/secondappfunctions/AK_jumpfunc_priceexperimental.jl")
 
 ## For quantities
-#include(rootdir*"/AK_jumpfunc_quantityexperimental.jl")
+include(rootdir*"/secondappfunctions/AK_jumpfunc_quantityexperimental.jl")
 
 
 ## The Montecarlo step: It gives the integrated moments h
@@ -279,9 +286,10 @@ solvwgamma[ind,i,:]=minx
 
 results=hcat(solvw[1,:],solvwgamma[1,:,:])
 
+
 #########################################################################
 ## Export
 DFsolv=convert(DataFrame,results)
-CSV.write(diroutput*"/AK_Footnote_55_experimental_price_misperception_reps_899.csv",DFsolv)
+CSV.write(dirresults*"//AK_Footnote_57_experimental_trembling_hand_reps_580.csv",DFsolv)
 ##########################################################################
 ##########################################################################

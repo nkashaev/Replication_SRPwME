@@ -183,7 +183,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,dgp)
 
             ###########################################
 
-            Random.seed!(123)
+            Random.seed!(123*ri)
             gammav0=zeros(dg)
 
 
@@ -264,7 +264,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,dgp)
             minimum(aiverify2)
             print("warm start ready!")
 
-            Random.seed!(123)
+            Random.seed!(123*ri)
             print(bshare)
             gchaincu!(theta0,gammav0,cve,rho,chainM,bshare)
             print("chain ready!")
@@ -279,7 +279,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,dgp)
 
             ###############################################################################
             ###############################################################################
-            Random.seed!(123)
+            Random.seed!(123*ri)
             res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
 
 
