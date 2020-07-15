@@ -150,7 +150,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             dlowa=.1
             deltasima=rand(n).*(1-dlowa).+dlowa
             dlowb=.99
-            dhighb=1.0
+            dhighb=.99
             deltasimb=rand(n).*(dhighb-dlowb).+dlowb
             lambda=randexp(n)/1
             lambdab=randexp(n)/1
@@ -183,7 +183,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
 
-            #cve=cve/1e7
+            cve=cve/1e7
 
 
             print("load data ready!")
@@ -270,7 +270,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-            W[:,:,:]=cve[:,:,:]-cvesim[:,:,:]
+            #W[:,:,:]=cve[:,:,:]-cvesim[:,:,:]
 
             minimum(aiverify2)
             print("warm start ready!")
