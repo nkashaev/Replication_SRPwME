@@ -1,5 +1,5 @@
 #Version Julia "1.1.0"
-#Author: Victor H. Aguiar
+#Author: Victor H. Aguiar and Nail Kashaev
 #email: vhaguiar@gmail.com
 
 count = 0
@@ -38,12 +38,11 @@ end
 
 ## time length
 @everywhere const T=50
-#@everywhere const T=4
 ## number of goods
 @everywhere const K=3
-# repetitions for the simulation
-## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-# set burn
+# repetitions for the effective rejection sampling
+## because the simulations are done using parallel Montecarlo we have nsimsp*nprocs draws.
+# set burn, we do not think burning is needed, but the option is here.
 burnrate=0
 nsimsp=30
 @everywhere const repn=($burnrate,$nsimsp)
@@ -145,7 +144,7 @@ include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 
 
 ###############################################################
-## New Fast jump
+## New jumpfunc
 ## This function will draw new candidates for the Montecarlo, in this case this is the same as the guessfun.
 ## The reason is that in this case, we can generate exactly data under the null of GARP plus being on the budget.
 
