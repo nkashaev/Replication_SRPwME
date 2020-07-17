@@ -3,13 +3,16 @@
 ## The function allows to set an afriatpar that corresponds to the cost efficiency index. We set it to 1.
 #maxit is the max. number of iterations allowed by the sampler before it restarts.
 #R has to get a random seed.
-#Do not pay attention to the name of the files cvesim since it does not matter, in this case it is filled by prices
+# cvesim is filled by simulated prices
 @everywhere function guessfun(;d=d::Float64,gamma=gamma::Float64,cve=cve::Float64,rho=rho::Float64)
     nobs=T
     ngoods=K
     afriatpar=1
+    ## The seed to R is created by a random sampling from the vector (1:1000000000), this ensures each call of guessfun produces a different simulation, including the parallel call
     seed=rand(1:1000000000)
+    ### number of maximum candidates that are tried in the rejection sampling algorithm.
     maxit=100000
+    ## This is a call to R using RCall R"command"
     R"set.seed($seed)"
     for indz=1:n
       qtest=cve[indz,:,:]
@@ -21,6 +24,7 @@
       @rget res2x
       ntest=size(res2x)[1]
       maxit2=1
+      ## if the number of prices generated is less than the desired size T, try again with a different seed until success. 
       while (ntest<T | maxit2<=100000)
         seed=rand(1:1000000000)
         R"set.seed($seed)"

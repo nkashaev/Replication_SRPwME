@@ -43,9 +43,9 @@ end
 #@everywhere const T=4
 ## number of goods
 @everywhere const K=3
-# repetitions for the simulation
-## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-# set burn
+# repetitions for effective rejection sampling
+## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
+# set burn, if needed
 burnrate=0
 nsimsp=33
 @everywhere const repn=($burnrate,$nsimsp)

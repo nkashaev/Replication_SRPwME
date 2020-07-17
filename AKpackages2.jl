@@ -20,6 +20,3 @@ Pkg.add("SoftGlobalScope")
 Pkg.add("CuArrays")
 Pkg.add("CUDAnative")
 Pkg.add("CUDAdrv")
-
-##BOBYQA
-] add "https://github.com/emmt/OptimPack.jl"
