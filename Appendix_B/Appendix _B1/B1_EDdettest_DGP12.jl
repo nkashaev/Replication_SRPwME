@@ -2,8 +2,7 @@ using LinearAlgebra
 using Random
 using MathProgBase
 using Clp
-using DataFrames
-using CSV
+using CSV, DataFrames
 ################################################################################
 ## Setting-up directory
 tempdir1=@__DIR__
@@ -27,7 +26,7 @@ rename!(Resultspower1,Symbol.(["seed","RejRate"]))
 Resultspower2=DataFrame(zeros(nrepl,2))
 rename!(Resultspower2,Symbol.(["seed","RejRate"]))
 Results=DataFrame(hcat(["DGP1";"DGP2"],[0.0; 0.0]))
-rename!(Results,Symbol.(["DGP","RejRate"]))
+rename!(Results,Symbol.(["DGP","AveRejRate"]))
 
 ## Data
 RRho,CVEt=ED_data_load(dirdata,"couples")
@@ -40,7 +39,7 @@ for ri=1:nrepl
     # Testing DGP 1
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower1[ri,1]=ri; Resultspower1[ri,2]=rate;
-    CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower1)
+    CSV.write(diroutput*"/B1_EDdettest_rr_dgp1.csv",Resultspower1)
     GC.gc()
     ## DGP2
     dlow=1.0
@@ -48,11 +47,11 @@ for ri=1:nrepl
     # Testing DGP 2
     rate=ED_det_test(rho,cve,stepdum) # Rejection Rate
     Resultspower2[ri,1]=ri; Resultspower2[ri,2]=rate;
-    CSV.write(diroutput*"/deter_null_theta0_$dlow._n_$n.csv",Resultspower2)
+    CSV.write(diroutput*"/B1_EDdettest_rr_dgp2.csv",Resultspower2)
     GC.gc()
 end
 ## Combining the results
 Results[1,2]=sum(Resultspower1[:,2])/nrepl
 Results[2,2]=sum(Resultspower2[:,2])/nrepl
 
-CSV.write(diroutput*"/deter_null_average_rejecton_rate.csv",Results)
+CSV.write(diroutput*"/B1_EDdettest_arr_dgp12.csv",Results)

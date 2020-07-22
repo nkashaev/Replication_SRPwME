@@ -12,7 +12,7 @@ diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 ################################################################################
 ## Parameters
-stepdum= .03 # d in [0.1:stepdum:1]
+stepdum= .05 # d in [0.1:stepdum:1]
 ## Function
 include(repdir*"/Deterministic_test/ED_det_test.jl") # ED deterministic test function
 include(repdir*"/Deterministic_test/ED_data_load.jl") # Function that loads the data
@@ -23,9 +23,9 @@ rate_singles=ED_det_test(rho,cve,stepdum) # Testing
 
 ## Testing couples
 rho,cve=ED_data_load(dirdata,"couples") # Data loading
-rate_couples=det_test_app(rho,cve,stepdum) # Testing
+rate_couples=ED_det_test(rho,cve,stepdum) # Testing
 
-## Combining results
-Results=DataFrame(hcat(["Singles";"Couples"],[rate_singles; rate_couples]))
+## Combining rounded results
+Results=DataFrame(hcat(["Singles";"Couples"],[round(rate_singles*100,digits=1); round(rate_couples*100,digits=1)]))
 rename!(Results,Symbol.(["Households","RejRate"]))
-CSV.write(diroutput*"/FirstApp_deterministic_tests.csv",Results)
+CSV.write(diroutput*"/1App_EDdettest_rr.csv",Results)
