@@ -1,0 +1,5 @@
+git checkout v1.1.1
+
+/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc7.3/arpack-ng/3.5.0/lib
+
+cp /cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc7.3/arpack-ng/3.5.0/lib/libarpack.so.2.0.0 ~/.julia/packages/Arpack/cu5By/deps/usr/lib/
