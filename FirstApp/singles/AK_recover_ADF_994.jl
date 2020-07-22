@@ -7,7 +7,6 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
 using JuMP
 using Ipopt

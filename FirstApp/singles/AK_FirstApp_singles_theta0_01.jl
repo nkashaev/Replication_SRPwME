@@ -7,14 +7,12 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
 using CSV
 using NLopt
 using BlackBoxOptim
 ## Lower bound for the support of the discount factor
 theta0=0.1
-
 ## Setting-up directory
 tempdir1=@__DIR__
 repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
