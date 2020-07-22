@@ -58,7 +58,7 @@ dgp2_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp2_chain_(0, 5000).sample_
 dgp3_10k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
 dgp3_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 5000).sample_2000.theta0.0.1.csv"))
 dgp4_10k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
-dgp5_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp5_chain_(0, 5000).sample_2000.theta0.0.1.csv"))
+dgp4_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 5000).sample_2000.theta0.0.1.csv"))
 ##Computing average rejection rates
 crval=quantile(Chisq(4),.95) #critical values based on chi2(4)
 RR_dgp2_10k=mean(dgp2_10k[:,2].>crval)
