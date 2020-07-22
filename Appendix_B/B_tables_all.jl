@@ -46,10 +46,10 @@ RR_dgp4_3k=mean(dgp4_3k[:,2].>crval)
 Table3=DataFrame(hcat(["DGP2" "same" "different";"DGP3" "different" "different"],[0.0; 0.0],[0.0; 0.0]))
 rename!(Table3,Symbol.(["DGP","prices","discount factors","n=2000","n=3000"]))
 #Rejection rates measured in %
-Table3[1,4]=RR_dgp3_2k *100
-Table3[1,5]=RR_dgp3_3k *100
-Table3[2,4]=RR_dgp4_2k *100
-Table3[2,5]=RR_dgp4_3k *100
+Table3[1,4]=round(RR_dgp3_2k *100, digits=1)
+Table3[1,5]=round(RR_dgp3_3k *100, digits=1)
+Table3[2,4]=round(RR_dgp4_2k *100, digits=1)
+Table3[2,5]=round(RR_dgp4_3k *100, digits=1)
 CSV.write(diroutput*"Appendix/B2_Table3.csv",Table3)
 ## Appendix B3, Table 4
 ##Loading the values of TS
@@ -71,10 +71,10 @@ RR_dgp4_5k=mean(dgp4_5k[:,2].>crval)
 Table4=DataFrame(hcat(["DGP2";"DGP3";"DGP4"],[0.0; 0.0; 0.0],[0.0; 0.0; 0.0]))
 rename!(Table4,Symbol.(["DGP","cl10000","cl5000"]))
 #Rejection rates measured in %
-Table4[1,2]=RR_dgp2_10k *100
-Table4[1,3]=RR_dgp2_5k *100
-Table4[2,2]=RR_dgp3_10k *100
-Table4[2,3]=RR_dgp3_5k *100
-Table4[3,2]=RR_dgp4_10k *100
-Table4[3,3]=RR_dgp4_5k *100
+Table4[1,2]=round(RR_dgp2_10k *100, digits=1)
+Table4[1,3]=round(RR_dgp2_5k *100, digits=1)
+Table4[2,2]=round(RR_dgp3_10k *100, digits=1)
+Table4[2,3]=round(RR_dgp3_5k *100, digits=1)
+Table4[3,2]=round(RR_dgp4_10k *100, digits=1)
+Table4[3,3]=round(RR_dgp4_5k *100, digits=1)
 CSV.write(diroutput*"Appendix/B3_Table4.csv",Table4)
