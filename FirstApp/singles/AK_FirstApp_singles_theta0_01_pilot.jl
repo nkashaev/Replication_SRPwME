@@ -15,3 +15,4 @@ diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 ################################################################################
 include(rootdir*"/singles/1App_test.jl")
+println("Hi Victor, I'm done")

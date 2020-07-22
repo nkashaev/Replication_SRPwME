@@ -25,33 +25,9 @@ const repn=(0,500000)
 ###############################################################################
 ## Data
 #Prices
-dum0=CSV.read(dirdata*"/p.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T0,K)
-@eval  const p=$dum0
-
-## Consumption
-dum0=CSV.read(dirdata*"/cve.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T0,K)
-@eval  cve=$dum0
-
-## Interest rates
-dum0=CSV.read(dirdata*"/rv.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-@eval const rv=$dum0.+1
-
-###############################################################################
-## Discounted prices
-rho=zeros(n,T,K)
-for i=1:n
-  for t=1:(T0)
-    rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
-  end
-end
+include(rootdir*"/singles/ED_data_load.jl") # Function that loads the data
+rho,cve=ED_data_load(dirdata,"singles")
 rhoold=rho
-
-## Consumption
 cveold=cve
 cve=zeros(n,T,K)
 cve[:,1:T0,:]=cveold
@@ -59,8 +35,6 @@ cve[:,T,:]=cveold[:,T0,:]
 cve
 
 print("load data ready!")
-
-
 
 ################################################################################
 ## Initializing

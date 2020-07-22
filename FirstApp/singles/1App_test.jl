@@ -22,7 +22,7 @@ chainM=zeros(n,dg,repn[2])
 ###############################################################################
 ## Data
 include(rootdir*"/singles/ED_data_load.jl") # Function that loads the data
-rho,cve=ED_data_load(dirdata,"singles")
+const rho,cve=ED_data_load(dirdata,"singles")
 
 print("load data ready!")
 ################################################################################
