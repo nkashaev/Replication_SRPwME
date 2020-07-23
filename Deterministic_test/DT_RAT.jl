@@ -92,4 +92,4 @@ rate=1-sum(garpresults)/n
 ## Pass Rate
 ratev=["pass-garp" rate]
 DFsolv=convert(DataFrame,ratev)
-CSV.write(diroutput*"/AK_SecondApp_deterministic_test.csv",DFsolv)
+CSV.write(diroutput*"/DT_RAT_rr.csv",DFsolv)

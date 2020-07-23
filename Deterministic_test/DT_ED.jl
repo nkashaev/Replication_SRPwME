@@ -28,4 +28,4 @@ rate_couples=ED_det_test(rho,cve,stepdum) # Testing
 ## Combining rounded results
 Results=DataFrame(hcat(["Singles";"Couples"],[round(rate_singles*100,digits=1); round(rate_couples*100,digits=1)]))
 rename!(Results,Symbol.(["Households","RejRate"]))
-CSV.write(diroutput*"/1App_EDdettest_rr.csv",Results)
+CSV.write(diroutput*"/DT_ED_rr.csv",Results)
