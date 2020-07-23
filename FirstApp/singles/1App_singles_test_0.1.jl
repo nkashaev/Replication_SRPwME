@@ -1,8 +1,5 @@
 ###Author: Victor H. Aguiar and Nail Kashaev
 ###email: vhaguiar@gmail.com
-## Version: JULIA 1.1.1 (2020-06-28)
-
-
 ## Lower bound for the support of the discount factor
 theta0=0.1
 

@@ -1,11 +1,7 @@
 ###Author: Victor H. Aguiar and Nail Kashaev
 ###email: vhaguiar@gmail.com
-## Version: JULIA 1.1.0 (2019-01-21)
-
-################################################################################
-## Theta
-theta0=0.975
-avgdelta=0.992
+## Lower bound for the support of the discount factor
+theta0=0.9
 
 ## Setting-up directory
 tempdir1=@__DIR__
@@ -14,6 +10,6 @@ appname="FirstApp"
 rootdir=repdir*"/"*appname
 diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
-##
-include(rootdir*"/singles/1App_ADF.jl")
+################################################################################
+include(rootdir*"/singles/1App_test.jl")
 println("Hi Victor, I'm done")

@@ -8,7 +8,8 @@ using NLopt
 using BlackBoxOptim
 ################################################################################
 ################################################################################
-##
+##Lower bound for the discount factor
+theta0=0.975
 # data size
 const T=4
 const dg=5
@@ -25,7 +26,7 @@ const repn=(0,500000)
 ###############################################################################
 ## Data
 #Prices
-include(rootdir*"/singles/ED_data_load.jl") # Function that loads the data
+include(rootdir*"/cpufunctions/ED_data_load.jl") # Function that loads the data
 rho,cve=ED_data_load(dirdata,"singles")
 rhoold=rho
 cveold=cve
