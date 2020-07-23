@@ -13,7 +13,6 @@ theta0=0.975
 # data size
 const T=4
 const dg=5
-T0=4
 # Sample size
 const n=185
 # Number of goods
@@ -28,12 +27,12 @@ const repn=(0,500000)
 #Prices
 include(rootdir*"/cpufunctions/ED_data_load.jl") # Function that loads the data
 rho,cve=ED_data_load(dirdata,"singles")
-rhoold=rho
-cveold=cve
-cve=zeros(n,T,K)
-cve[:,1:T0,:]=cveold
-cve[:,T,:]=cveold[:,T0,:]
-cve
+# rhoold=rho
+# cveold=cve
+# cve=zeros(n,T,K)
+# cve[:,1:T0,:]=cveold
+# cve[:,T,:]=cveold[:,T0,:]
+# cve
 
 print("load data ready!")
 
@@ -96,7 +95,6 @@ chainMcu[:,:,:]=cu(chainM[:,:,indfast])
 ###############################################################################
 Random.seed!(123)
 res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-
 
 minr=best_fitness(res)
 TSMC=2*minr*n
@@ -191,7 +189,7 @@ TSMC
 
 
 Results1=DataFrame([theta0 avgdelta TSMC])
-names!(Results1,Symbol.(["theta0","ADF","TSGMMcueMC"]))
+names!(Results1,Symbol.(["theta0","ADF","TS"]))
 Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
 CSV.write(diroutput*"/AK_singles_ADF_cuda_$avgdelta.csv",Results1)
 CSV.write(diroutput*"/results_gamma_ADF_$avgdelta.csv",Results1gamma)
