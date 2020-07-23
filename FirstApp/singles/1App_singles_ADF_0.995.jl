@@ -1,6 +1,6 @@
 ################################################################################
 ## Tested value for the average discount factor
-avgdelta=0.996
+avgdelta=0.995
 
 ## Setting-up directory
 tempdir1=@__DIR__
@@ -10,5 +10,5 @@ rootdir=repdir*"/"*appname
 diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 ##
-include(rootdir*"/singles/1App_ADF.jl")
+include(rootdir*"/singles/1App_singles_ADF.jl")
 println("Hi Victor, I'm done")
