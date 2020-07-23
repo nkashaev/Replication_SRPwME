@@ -1,5 +1,5 @@
 ## Lower bound for the support of the discount factor
-theta0=0.975
+theta0=1.0
 ## Sample size
 const n=185
 #Type of households
@@ -12,7 +12,7 @@ rootdir=repdir*"/"*appname
 diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 ################################################################################
-include(rootdir*"/cpufunctions/1App_test.jl")
+include(rootdir*"/cpufunctions/1App_main.jl")
 
 ##Saving the output
 Results1=DataFrame([theta0 TSMC])
