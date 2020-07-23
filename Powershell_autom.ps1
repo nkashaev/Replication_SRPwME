@@ -5,6 +5,8 @@ Start-Transcript
 Write-Host "SINGLES" 
 
 D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\AK_FirstApp_singles_theta0_01_pilot.jl"
+D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.992.jl"
+
 
 Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\AK_FirstApp_singles_theta0_0975.jl"}
 D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\AK_FirstApp_singles_theta0_1.jl"
