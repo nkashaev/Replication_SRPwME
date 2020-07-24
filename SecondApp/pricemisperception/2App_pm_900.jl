@@ -1,5 +1,5 @@
 #Version Julia "1.1.0"
-#Author: Victor H. Aguiar
+#Author: Victor H. Aguiar & Nail Kashaev
 #email: vhaguiar@gmail.com
 
 count = 0
@@ -9,7 +9,7 @@ using Distributed
 addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
-# Set a random seed
+# Set a random seed in each processor
 @everywhere Random.seed!(3000)
 @distributed for replicate_idx=1:nprocs
   Random.seed!(3000*replicate_idx)
