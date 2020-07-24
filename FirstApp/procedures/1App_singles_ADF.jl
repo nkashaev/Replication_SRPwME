@@ -183,9 +183,3 @@ ret
 ############################################
 
 TSMC
-
-
-
-Results1=DataFrame([theta0 avgdelta TSMC])
-names!(Results1,Symbol.(["theta0","ADF","TS"]))
-CSV.write(diroutput*"/1App_singles_ADF_$avgdelta.csv",Results1)
