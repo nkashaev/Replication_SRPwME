@@ -23,11 +23,11 @@ dum0=CSV.read(dirdata*"/rationalitydata3goods.csv")
 # break the dataset into subdatasets by individual
 splitdum0=groupby(dum0,:id)
 @eval  splitp=$splitdum0
-#Initialize array of effective prices, for this application \rho= p
+#Initialize array of effective prices
 rho=zeros(n,T,K)
 #Initialize array of consumption
 cve=zeros(n,T,K)
-#Fill the arrays
+# Fill the arrays
 # Columns 10:12 correspond to prices
 # Columns 4:6 correspond to consumption bundles
 for i=1:n
@@ -36,10 +36,9 @@ for i=1:n
     cve[i,:,:]=dum0[1:T,4:6]
 end
 
-##########################################################################
-##########################################################################
-#Deterministic
 
+################################################################################
+## Deterministic
 ind=1
 p=rho[ind,:,:]
 q=cve[ind,:,:]
@@ -92,4 +91,4 @@ rate=1-sum(garpresults)/n
 ## Pass Rate
 ratev=["pass-garp" rate]
 DFsolv=convert(DataFrame,ratev)
-CSV.write(diroutput*"/AK_SecondApp_deterministic_test.csv",DFsolv)
+CSV.write(diroutput*"/2App_dt_rr.csv",DFsolv)

@@ -18,8 +18,8 @@ stepdum=.05 # d in [0.1:stepdum:1]
 n=2000      #Sample size of the generated sample
 ## Functions
 include(rootdir*"/powerfunctions/dgp_nail.jl") #Functions that generate the data
-include(repdir*"/Deterministic_test/ED_det_test.jl") # ED deterministic test function
-include(repdir*"/Deterministic_test/ED_data_load.jl") # Function that loads the data
+include(repdir*"/FirstApp/cpufunctions/ED_det_test.jl") # ED deterministic test function
+include(repdir*"/FirstApp/cpufunctions/ED_data_load.jl") # Function that loads the data
 ## Output files
 Resultspower1=DataFrame(zeros(nrepl,2))
 rename!(Resultspower1,Symbol.(["seed","RejRate"]))
