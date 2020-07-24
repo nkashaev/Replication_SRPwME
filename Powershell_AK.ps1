@@ -13,8 +13,8 @@ D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\Fi
 Write-Host "SINGLES RECOVER"
 
 ##Singles Recover Delta
-Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.998.jl"}
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.996.jl"
+Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.996.jl"}
+D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.995.jl"
 D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.994.jl"
 
 
