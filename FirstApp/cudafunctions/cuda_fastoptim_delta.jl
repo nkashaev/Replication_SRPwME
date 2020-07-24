@@ -1,13 +1,13 @@
-######################################################################
-## MC
+#Initializing vector of simulated values of g(x,e)
 geta=cu(ones(n,dg))
 gtry=cu(ones(n,dg))
 @inbounds geta[:,:]=chainMcu[:,:,1]
 dvecM=cu(zeros(n,dg))
-logunif=log.(curand(n,nfast))
+logunif=log.(CuArrays.rand(n,nfast))
 gamma=cu(ones(dg))
 valf=cu(zeros(n))
 
+# Objective value CUDA kernel
 function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     index = (blockIdx().x - 1) * blockDim().x + threadIdx().x
 
@@ -20,10 +20,8 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
             for t=1:dg
                 gtry[i,t]=chainMcu[i,t,j]
                 valf[i]+=gtry[i,t]*gamma[t]-geta[i,t]*gamma[t]
-                #valf[2]+=CUDAnative.pow(geta[i,t]*1.0,2.0)-CUDAnative.pow(gtry[i,t]*1.0,2.0)
             end
             for t=1:dg
-                #geta[i,t]=logunif[i] < valf[1]-valf[2] ? gtry[i,t] : geta[i,t]
                 geta[i,t]=logunif[i,j] < valf[i] ? gtry[i,t] : geta[i,t]
                 dvecM[i,t]+=geta[i,t]/nfast
             end
@@ -32,19 +30,15 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     return nothing
 end
 
-# numblocks = ceil(Int, n/167)
-# @cuda threads=167 blocks=numblocks preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
-#
-# print("")
 
-
+## NLopt objective function calls CUDA kernel
 function objMCcu(gamma0::Vector, grad::Vector)
   if length(grad) > 0
   end
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
+  @inbounds logunif[:]=log.(CuArrays.rand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
   gamma=cu(gamma0)
@@ -74,12 +68,12 @@ end
 
 
 
-
+# Objective Function for BlackBoxoptim calls CUDA Kernel
 function objMCcu2(gamma0)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
+  @inbounds logunif[:]=log.(CuArrays.rand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
   gamma=cu(gamma0)
@@ -110,7 +104,7 @@ function objMCcu2c(gamma0)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
-  @inbounds logunif[:]=log.(curand(n,nfast))
+  @inbounds logunif[:]=log.(CuArrays.rand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
   gamma=cu(gamma0)
