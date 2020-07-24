@@ -3,9 +3,8 @@ using CuArrays.CURAND
 using CUDAnative
 using CUDAdrv
 
-##New delta function:
-## desc: takes as arguments consistent values of vsim and cvesim, given observed rho, to generate  new consistent delta
-
+# For details of the rest of this script see the comments in /ReplicationAK/FirstApp/cudafunctions/cuda_chainfun.jl
+# The main difference is that this code includes changes to allow for the additional recoverability moment
 function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
     dmin=d
     dmax=1
@@ -44,7 +43,6 @@ function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
   return nothing
 end
 ##New vsim and cvesim generator
-## desc: takes as arguments consistent values of delta and then genertes new
 
 function new_VCcu!(VC,P,dVC,Delta,vsimc,cvesimc,isim,unif2)
   # given the initial matrix VC and prices P
@@ -123,11 +121,9 @@ end
 
 
 function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
-    #unif1=curand(n).*(.999-.001).+.001
     unif1=curand(n)
     v=curandn(n,T,(K+1))
     dVC=v./norm(v)
-    #unif2=curand(n).*(.999-.001).+.001
     unif2=curand(n)
     numblocks = ceil(Int, n/167)
     @cuda threads=167 blocks=numblocks jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
@@ -138,7 +134,7 @@ end;
 
 
 ####################################################################################
-###################################################################################
+#  MCMC chain generator
 function gchaincu!(d,gamma,cve,rho,chainM=chainM)
     dcu=cu(d)
     Deltac=zeros(n)
@@ -163,12 +159,9 @@ function gchaincu!(d,gamma,cve,rho,chainM=chainM)
 
     r=-repn[1]+1
     while r<=repn[2]
-      #Deltac[:],Wc[:,:,:],vsimc[:,:],cvesimc[:,:,:]=jumpfun2(d=d,gamma=gamma,Delta=Delta,cvesim=cvesim,vsim=vsim,cve=cve,rho=rho);
       Deltac[:],Wc[:,:,:],vsimc[:,:],cvesimc[:,:,:]=jumpwrap2!(dcu,Deltacu,vsimcu,cvesimcu,cvecu,rhocu,Deltaccu,vsimccu,cvesimccu,VCu);
       logtrydens=(-sum(sum(rho.*Wc,dims=3).^2,dims=2)+ sum(sum(rho.*W,dims=3).^2,dims=2))[:,1,1]
       dum=log.(rand(n)).<logtrydens
-
-      #dum=zeros(n).<ones(n)
       @inbounds cvesim[dum,:,:]=cvesimc[dum,:,:]
       @inbounds W[dum,:,:]=Wc[dum,:,:]
       @inbounds vsim[dum,:]=vsimc[dum,:]
