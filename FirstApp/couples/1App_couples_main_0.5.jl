@@ -15,7 +15,7 @@ diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 
 ## Main
-include(rootdir*"/cpufunctions/1App_main.jl")
+include(rootdir*"/procedures/1App_main.jl")
 
 ## Saving the output
 Results1=DataFrame([theta0 TSMC])

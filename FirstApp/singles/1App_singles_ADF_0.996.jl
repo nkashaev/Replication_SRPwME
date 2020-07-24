@@ -10,5 +10,5 @@ diroutput=repdir*"/Output_all"
 dirdata=repdir*"/Data_all"
 
 ## Main
-include(rootdir*"/singles/1App_singles_ADF.jl")
+include(rootdir*"/procedures/1App_singles_ADF.jl")
 println("Success")
