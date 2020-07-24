@@ -60,7 +60,7 @@ GC.gc()
 # chainMcu memory initialization in CUDA.
 chainMcu=cu(chainM[:,:,indfast])
 ## Loading the objective functions in CUDA.
-include(rootdir*"/cudafunctions/cuda_fastoptim_delta.jl")
+include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
 print("functions are loaded!")
 
 ## Generating MCMC chain.
@@ -90,7 +90,7 @@ chainMcu[:,:,:]=cu(chainM[:,:,indfast])
 ## Reinitializing the random seed for the BlackBoxOptim first step of Optimization.
 Random.seed!(123)
 # Optimizes objMCcu2c, limits are theoretically -Inf, Inf, but BlackBoxOptim requires finite bounds.
-res = bboptimize(objMCcu2c; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
+res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
 # Objective value.
 minr=best_fitness(res)
 # TS value.

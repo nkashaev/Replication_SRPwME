@@ -6,7 +6,7 @@ gtry=cu(ones(n,dg))
 dvecM=cu(zeros(n,dg))
 # Log of uniform
 logunif=log.(CuArrays.rand(n,nfast))
-# Initializing gamam in CUDA
+# Initializing gamma in CUDA
 gamma=cu(ones(dg))
 # Initializing value for chain generation
 valf=cu(zeros(n))
