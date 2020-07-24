@@ -7,7 +7,7 @@ function ED_data_load(dirdata,house)
     p=reshape(Array(CSV.read(dirdata*"/pcouple.csv")),n,T,K)
     ## Consumption
     cve=reshape(Array(CSV.read(dirdata*"/cvecouple.csv")),n,T,K)
-    ## Interest rates
+    ## Interest rates, +1.0 is needed following Adam et al. (2014) replication code.
     rv=Array(CSV.read(dirdata*"/rvcouple.csv")) .+ 1.0
   elseif house=="singles"
     n=185
