@@ -4,45 +4,8 @@ using CUDAnative
 using CUDAdrv
 
 ##New delta function:
-## desc: takes as arguments consistent values of vsim and cvesim, given observed rho, to generate  new consistent delta
-function new_deltacu!(d,vsim,cvesim,rho,Deltac,isim,unif1)
-    dmin=d
-    dmax=1
-
-    for t=2:T
-
-        for s=1:T
-            numer=0
-            for k=1:K
-                numer+=rho[isim,t,k]*(cvesim[isim,t,k]-cvesim[isim,s,k])
-            end
-
-            denom=@inbounds (vsim[isim,t]-vsim[isim,s])
-
-
-             if denom>0
-                val1=0<numer/denom ? numer/denom : 0.0
-                val1=CUDAnative.pow(val1*1.0,(1/(t-1))*1.0)
-                dmin=dmin<val1 ? val1 : dmin
-
-             end
-             if denom<0
-                 val1=0<numer/denom ? numer/denom : 0.0
-                 val1=CUDAnative.pow(val1*1.0,(1/(t-1))*1.0)
-                  dmax=dmax>val1 ? val1 : dmax
-             end
-        end
-
-
-  end
-
-
-  dmax=dmax>1 ? 1 : dmax
-  Deltac[isim]=dmax > dmin ? (unif1[isim]*(dmax-dmin)+dmin) : dmax
-  return nothing
-end
-
-## New delta
+## This funciton takes as arguments consistent values of vsim and cvesim, given observed rho, to generate  new consistent delta.
+# See Appendix C for details of double hit-and-run implementation.
 function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
     dmin=d
     dmax=1
@@ -81,7 +44,8 @@ function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
   return nothing
 end
 ##New vsim and cvesim generator
-## desc: takes as arguments consistent values of delta and then genertes new variables
+## This function takes as arguments consistent values of delta and rho.
+# Then generates new Afriat numbers vsim and consumption values cvesim.
 
 function new_VCcu!(VC,P,dVC,Delta,vsimc,cvesimc,isim,unif2)
   # given the initial matrix VC and prices P
@@ -133,6 +97,9 @@ function new_VCcu!(VC,P,dVC,Delta,vsimc,cvesimc,isim,unif2)
 end;
 
 
+## CUDA Kernel for generating a new element of the chain given the previous one.
+# See Appendix C for more details about double hit-and-run
+# The index and stride structure is particular to the GPU card, here we use a linear structure.
 
 function jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
 
@@ -156,18 +123,10 @@ function jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,
   return nothing
 end
 ################################################################################
-#######################################################################################
 
-
-function jumpwrap!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,VC)
-    unif1=CuArrays.rand(n)
-    v=CuArrays.rand(n,T,(K+1))
-    dVC=v./norm(v)
-    unif2=CuArrays.rand(n)
-    @cuda threads=250 jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
-end
-
-
+# This function wraps jumpfuncu! to create a communication channel from the CPU to GPU and back.
+# It executes the jumpfuncu! CUDA kernel with the @cuda command with a given number of blocks and threads.
+# The number of blocks and threads are specific to the GPU card's architecture.
 function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
     unif1=CuArrays.rand(n)
     v=CuArrays.rand(n,T,(K+1))
@@ -176,13 +135,10 @@ function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
     numblocks = ceil(Int, n/167)
     @cuda threads=167 blocks=numblocks jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
     return Array(Deltac), Array(cve-cvesimc), Array(vsimc), Array(cvesimc)
-
 end;
 
-
-
 ####################################################################################
-###################################################################################
+# This function fills chainM with the elements of the MCMC chain. 
 function gchaincu!(d,gamma,cve,rho,chainM=chainM)
     dcu=cu(d)
     Deltac=zeros(n)
