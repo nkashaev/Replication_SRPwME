@@ -186,10 +186,6 @@ TSMC
 
 
 
-
-
 Results1=DataFrame([theta0 avgdelta TSMC])
 names!(Results1,Symbol.(["theta0","ADF","TS"]))
-Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
 CSV.write(diroutput*"/1App_singles_ADF_$avgdelta.csv",Results1)
-CSV.write(diroutput*"/1App_gamma_ADF_$avgdelta.csv",Results1gamma)
