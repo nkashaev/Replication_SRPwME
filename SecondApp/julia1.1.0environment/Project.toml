@@ -1,0 +1,6 @@
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+MathProgBase = "fdba3010-5040-5b88-9595-932c9decdf73"
+NLopt = "76087f3c-5699-56af-9a33-bf431cd00edd"
+RCall = "6f49c342-dc21-5d91-9882-a32aef131414"
