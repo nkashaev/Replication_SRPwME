@@ -165,7 +165,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
 
-            cve=cve/1e5
+            cve=cve/1e1
 
 
             print("load data ready!")
@@ -252,7 +252,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-            
+
 
             minimum(aiverify2)
             print("warm start ready!")
