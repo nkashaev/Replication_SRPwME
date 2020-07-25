@@ -1,9 +1,9 @@
 using Convex
 using ECOS
 # Formulate and solve a quadratic problem:
-#     max ||g|| st. Afriat inequalities for random d
+#     min ||g||^2 st. Afriat inequalities for random d
 
-# deltavec is a vector of candidates fixed delta values
+# deltavec is a vector of candidates for fixed delta values
 # For details of the rest of this script see the comments in /ReplicationAK/FirstApp/cpufunctions/warm_start_searchdelta_justcvex.jl
 deltavec=theta0<1 ? [0 .5  1]*(1-theta0).+theta0 : [1]
 ndelta=length(deltavec)

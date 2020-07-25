@@ -6,14 +6,12 @@ function ED_det_test(rho,cve,stepdum)
     solsuccess=sol.status
     deltat=collect(.1:stepdum:1)
     soldet=zeros(size(deltat,1),n)
-
     A0=zeros(size(q,2),size(q,2),size(q,2))
     b0=zeros(size(q,2),size(q,2),1)
 
     for ind=1:n
       for dd=1:size(deltat,1)
         (Ar,br)=lccons(delta=deltat[dd],p=rho[ind,:,:]',q=cve[ind,:,:]',A=A0,b=b0)
-
         Ar=reshape(Ar,size(q,2)*size(q,2),size(q,2))
         br=reshape(br,size(q,2)*size(q,2),1)
         ind0=zeros(size(Ar,1))
@@ -29,12 +27,9 @@ function ED_det_test(rho,cve,stepdum)
         ind0=ind0.==ones(size(Ar,1))
         Ar=Ar[ind0,:]
         br=br[ind0,:]
-
         c=zeros(T)
-
         lb=ones(T)
         ub=Inf*ones(T)
-
         sol = linprog(c,Ar,'<',br[:,1],lb,ub,ClpSolver())
         soldet[dd,ind]=sol.status==solsuccess
       end
@@ -42,7 +37,6 @@ function ED_det_test(rho,cve,stepdum)
 
     ## Rejection Rate
     rate=1-sum((sum(soldet,dims=1)[:].>=ones(n))*1)/n
-
 return rate
 end
 
