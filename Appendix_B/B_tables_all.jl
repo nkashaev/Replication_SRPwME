@@ -28,7 +28,7 @@ Table2[1,2]=round(RR_dgp_dettest[1,2] *100, digits=1)
 Table2[1,3]=RR_dgp1 *100
 Table2[2,2]=round(RR_dgp_dettest[2,2] *100, digits=1)
 Table2[2,3]=RR_dgp2 *100
-CSV.write(diroutput*"Appendix/B1_Table2.csv",Table1)
+CSV.write(diroutput*"Appendix/B1_Table2.csv",Table2)
 
 ## Appendix B2, Table 3
 ##Loading the values of TS
@@ -40,7 +40,7 @@ dgp5_3k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp5_chain_(0, 10000).sample
 crval=quantile(Chisq(4),.95) #critical values based on chi2(4)
 RR_dgp3_2k=mean(dgp3_3k[:,2].>crval)
 RR_dgp3_3k=mean(dgp3_3k[:,2].>crval)
-RR_dgp4_2k=mean(dgp4_3k[:,2].>crval)
+RR_dgp4_2k=mean(dgp4_2k[:,2].>crval)
 RR_dgp4_3k=mean(dgp4_3k[:,2].>crval)
 ##Saving results
 Table3=DataFrame(hcat(["DGP2" "same" "different";"DGP3" "different" "different"],[0.0; 0.0],[0.0; 0.0]))
