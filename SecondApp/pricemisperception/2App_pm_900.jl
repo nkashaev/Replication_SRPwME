@@ -10,10 +10,7 @@ addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
 # Set a random seed in each processor
-@everywhere Random.seed!(3000)
-@distributed for replicate_idx=1:nprocs
-  Random.seed!(3000*replicate_idx)
-end
+
 @everywhere using NLopt
 @everywhere using DataFrames
 @everywhere using MathProgBase
@@ -44,9 +41,9 @@ end
 #@everywhere const T=4
 ## number of goods
 @everywhere const K=3
-# repetitions for the simulation
-## because the simulations are done using parallel Montecarlo we have 100*nprocs draws.
-# set burn
+# repetitions foreffective rejection sampling
+## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
+# set burn, if needed
 burnrate=0
 nsimsp=30
 @everywhere const repn=($burnrate,$nsimsp)
@@ -155,8 +152,6 @@ include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 ## For prices
 include(rootdir*"/secondappfunctions/AK_jumpfunc_priceexperimental.jl")
 
-## For quantities
-#include(rootdir*"/AK_jumpfunc_quantityexperimental.jl")
 
 
 ## The Montecarlo step: It gives the integrated moments h
@@ -272,6 +267,13 @@ function obj2(gamma0::Vector, grad::Vector)
   return Qn2[1]
 end
 
+Random.seed!(3000)
+gammav0=randn(dg)
+
+# Set a random seed in each processor
+@distributed for replicate_idx=1:nprocs
+  Random.seed!(3000*replicate_idx)
+end
 
 
 opt=NLopt.Opt(:LN_BOBYQA,dg)
@@ -279,7 +281,6 @@ NLopt.lower_bounds!(opt,vcat(ones(dg).*-Inf))
 NLopt.upper_bounds!(opt,vcat(ones(dg).*Inf))
 NLopt.xtol_rel!(opt,toluser)
 NLopt.min_objective!(opt,obj2)
-gammav0=randn(dg)
 (minf,minx,ret) = NLopt.optimize!(opt, gammav0)
 solvw[ind,i]=minf*2*n
 solvwgamma[ind,i,:]=minx
