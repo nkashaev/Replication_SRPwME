@@ -1,6 +1,7 @@
 count = 0
 #Set the number of processors: Change it to the max the computer allows
-nprocs=20
+#nprocs=20
+nprocs=580
 using Distributed
 addprocs(nprocs)
 @everywhere Distributed
@@ -30,7 +31,8 @@ end
 ## Because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
 # If needed, one can set burnrate.
 burnrate=0
-nsimsp=29
+#nsimsp=29
+nsimsp=1
 ## Running the code.
 include(rootdir*"/tremblinghand/2App_th_main.jl")
 
