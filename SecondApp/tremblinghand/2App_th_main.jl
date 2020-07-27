@@ -21,16 +21,16 @@ splitdum0=groupby(dum0,:id)
 #Initialize array of consumption.
 @everywhere  cve=zeros(n,T,K)
 #Fill the arrays
-# Columns 10-12 correspond to prices
-# Columns 4-6 correspond to consumption bundles
+# Columns 10-12 correspond to prices.
+# Columns 4-6 correspond to consumption bundles.
 @everywhere for i=1:n
     dum0=convert(Array,splitp[i])
     rho[i,:,:]=dum0[1:T,10:12]
     cve[i,:,:]=dum0[1:T,4:6]
 end
 ################################################################################
-## Output for simulations parameters
-# Number of moments: w^p\in R^(T*K)
+## Output for simulations parameters.
+# Number of moments: w^p\in R^(T*K).
 @everywhere dg=T*K
 @everywhere nsims=1
 @everywhere ndelta=1
@@ -44,7 +44,7 @@ results=hcat(solv[1,:],solvw[1,:],solvgamma[1,:,:],solvwgamma[1,:,:])
 ################################################################################
 ## Main functions
 ################################################################################
-##Moments Function
+##Moments Function.
 # This function is the moment function g(x,e).
 include(rootdir*"/secondappfunctions/myfun_th.jl")
 
@@ -71,7 +71,7 @@ include(rootdir*"/secondappfunctions/guessfun_quantity.jl")
 ## This function will draw new candidates for the Montecarlo. In this case this is the same as the guessfun.
 include(rootdir*"/secondappfunctions/jumpfun_quantity.jl")
 
-## The Montecarlo step: It gives the integrated moments h
+## The Montecarlo step: It gives the integrated moments h.
 # This code follows Schennach's code in Gauss (Schennach, 2014).
 @everywhere function gavg(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
