@@ -5,9 +5,6 @@ using ECOS
 
 deltavecA=darandsim
 deltavecB=dbrandsim
-
-ndelta=1
-
 DeltaA=zeros(n)
 DeltatempA=zeros(n)
 DeltaB=zeros(n)
@@ -16,9 +13,10 @@ W=ones(n,T,K)
 cvesim=zeros(n,T,K)
 vsimA=zeros(n,T)
 vsimB=zeros(n,T)
+# ndelta here it is set to 1 because DeltaA and DeltaB are fixed
+ndelta=1
 optimval=ones(n,ndelta+1)*10000
-
-Kb=0
+# matrix for verifying Afriat inequalities
 aiverify2=zeros(n,T,T)
 vA=Variable(T, Positive())
 vB=Variable(T, Positive())
@@ -30,9 +28,6 @@ P=I+zeros(1,1)
 for id=1:n
         DeltatempA[id]=deltavecA[id]
         DeltatempB[id]=deltavecB[id]
-
-
-        #    return Delta, Alpha, W, vsim, cvesim
 
 
         modvex=minimize(quadform(rho[id,1,:]'*(c[1,:]'-cve[id,1,:]),P)+quadform(rho[id,2,:]'*(c[2,:]'-cve[id,2,:]),P)+quadform(rho[id,3,:]'*(c[3,:]'-cve[id,3,:]),P)+quadform(rho[id,4,:]'*(c[4,:]'-cve[id,4,:]),P))
