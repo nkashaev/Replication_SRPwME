@@ -1,9 +1,5 @@
 ##Guess quadratic program
 using Convex
-using SCS
-using JuMP
-using Ipopt
-using Clp
 using ECOS
 
 
@@ -79,7 +75,6 @@ for id=1:n
                 aiverify2[id,t,s]=DeltaA[id]^(-(t-1))*(vsimA[id,t]-vsimA[id,s])+DeltaB[id]^(-(t-1))*(vsimB[id,t]-vsimB[id,s])-rho[id,t,:]'*(cvesim[id,t,:]-cvesim[id,s,:])
             end
         end
-    #end
 end
 modvex=nothing
 GC.gc()
