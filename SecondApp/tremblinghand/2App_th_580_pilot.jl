@@ -36,6 +36,6 @@ include(rootdir*"/tremblinghand/2App_th_main.jl")
 #########################################################################
 ## Export
 DFsolv=convert(DataFrame,results)
-CSV.write(dirresults*"//AK_Footnote_57_experimental_trembling_hand_reps_580.csv",DFsolv)
+CSV.write(dirresults*"//2App_th_reps_580.csv",DFsolv)
 ##########################################################################
 ##########################################################################

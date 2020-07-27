@@ -105,7 +105,7 @@ results=hcat(solv[1,:],solvw[1,:],solvgamma[1,:,:],solvwgamma[1,:,:])
 #rho.- effective price array
 
 ## AK_myfunc_gabaix.jl tests for E[w^p]=0
-include(rootdir*"/secondappfunctions/AK_myfunc_gabaix.jl")
+include(rootdir*"/secondappfunctions/myfun_pm.jl")
 
 ## New Guess Functions: Constraint to satisfy pw=0 as.
 @everywhere m=zeros(n,T)
@@ -132,7 +132,7 @@ end
 #maxit is the max. number of iterations allowed by the sampler before it restarts.
 #R has to get a random seed.
 
-include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
+include(rootdir*"/secondappfunctions/guessfun_price.jl")
 
 
 ## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of p^* that satisfies GARP and in on the budget line.
@@ -150,7 +150,7 @@ include(rootdir*"/secondappfunctions/AK_guessfunc_priceexperimental.jl")
 ## The reason is that in this case, we can generate exactly data under the null of GARP plus being on the budget.
 
 ## For prices
-include(rootdir*"/secondappfunctions/AK_jumpfunc_priceexperimental.jl")
+include(rootdir*"/secondappfunctions/jumpfun_price.jl")
 
 
 
