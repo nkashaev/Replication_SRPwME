@@ -29,7 +29,6 @@ for id=1:n
         DeltatempA[id]=deltavecA[id]
         DeltatempB[id]=deltavecB[id]
 
-
         modvex=minimize(quadform(rho[id,1,:]'*(c[1,:]'-cve[id,1,:]),P)+quadform(rho[id,2,:]'*(c[2,:]'-cve[id,2,:]),P)+quadform(rho[id,3,:]'*(c[3,:]'-cve[id,3,:]),P)+quadform(rho[id,4,:]'*(c[4,:]'-cve[id,4,:]),P))
         for t=1:T
             for s=1:T
@@ -41,10 +40,7 @@ for id=1:n
 
         optimval[id,1]=modvex.optval
 
-
-
         aiverify=zeros(n,T,T)
-
 
         DeltaA[id]=DeltatempA[id]
         DeltaB[id]=DeltatempB[id]
@@ -54,16 +50,8 @@ for id=1:n
             vsimB[id,i]=vB.value[i]
             for j=1:K
                 cvesim[id,i,j]=c.value[i,j]
-
             end
         end
-
-
-
-
-
-
-
 
         for t=1:T
             for s=1:T
