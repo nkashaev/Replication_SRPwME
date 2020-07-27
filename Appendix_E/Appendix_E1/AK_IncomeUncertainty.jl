@@ -23,124 +23,96 @@ theta0=1.0
 ## Setting-up directory
 tempdir1=@__DIR__
 repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
-appname="Appendix_E/E1_incomeuncertainty"
-rootdir=repdir*"/"*appname
+rootdir=repdir*"/Appendix_E/Appendix_E1"
 diroutput=repdir*"/Output_all/Appendix"
 dirdata=repdir*"/Data_all"
 ################################################################################
-## data size
 # Sample size
 const n=2004
 # Number of time periods
 const T=4
 # Number of goods
 const K=17
-## Repetitions for the integration step
-const repn=(0,50000)   #repn=(burn,number_simulations)
-const dg=7              # dg=degrees of freedom
-chainM=zeros(n,dg,repn[2])
+## MCMC Chain length.
+# Burning is optional.
+const repn=(0,500000)       #repn=(burn,number_simulations)
+const dg=7                  # dg= number of moment conditions (degrees of freedom)
+chainM=zeros(n,dg,repn[2])  # Initializing MCMC chain
 
 ###############################################################################
 ## Data
-#Prices
-dum0=CSV.read(dirdata*"/pcouple.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T,K)
-@eval  const p=$dum0
-
-## Consumption
-dum0=CSV.read(dirdata*"/cvecouple.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-dum0=reshape(dum0,n,T,K)
-@eval  const cve=$dum0
-
-## Interest rates
-dum0=CSV.read(dirdata*"/rvcouple.csv",datarow=2,allowmissing=:none)
-dum0=convert(Matrix,dum0[:,:])
-@eval const rv=$dum0.+1
-
-## Discounted prices
-rho=zeros(n,T,K)
-for i=1:n
-  for t=1:T
-    rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
-  end
-end
-
-print("load data ready!")
-
-
-
+include(rootdir*"/cpufunctions/ED_data_load.jl")    # Function that loads the data
+const rho, cve=ED_data_load(dirdata,"couples")       # Loading the data
+print("data loading is ready!")
 ################################################################################
-## Initializing
-
-###########################################
-
+## Fixing random seed for the random number generator.
 Random.seed!(123)
+## Initializing gamma.
 gammav0=zeros(dg)
-
-
-
-
 ################################################################################
 ## Main functions loading and initialization
-
 ################################################################################
-## moments
-## Moment: my function
+## Moment: g(x,e).
 include(rootdir*"/cpufunctions/myfun_IU_meandisc.jl")
-## chain generation with CUDA
+# Loading functions for the generation of the chain with CUDA -new packages are loaded here.
 include(rootdir*"/cudafunctions/cuda_chainfun_IU_meansdisc.jl")
-## optimization with CUDA
-numblocks = ceil(Int, n/100)
-const nfast=20000
+## Optimization step in CUDA.
+# Number of blocks for CUDA kernel execution. Parallelization is among individuals size=n.
+numblocks = ceil(Int, n/167)    # 167 is a number we obtained from trial and error to speed up the code.
+                                # Check your own GPU card's architecture to get the number of blocks that optimizes your speed.
+# Select a random subset of the chain (this is equivalent to a random draw from \eta).
+# nfast is the number of draws from eta.
+const nfast=20000               #20000 is the largest number we can use given GPU memory restrictions.
+# Reinitializing random seed.
 Random.seed!(123)
+# Generate random index.
 indfast=rand(1:repn[2],nfast)
+# Keep the first element fixed.
 indfast[1]=1
+# Memory management.
 chainMcu=nothing
+# Garbage collection.
 GC.gc()
-
-
+# Passing the draws from eta to CUDA.
 chainMcu=cu(chainM[:,:,indfast])
+## Loading the objective functions in CUDA.
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
-print("functions loaded!")
-
-
-## warmstart
+# Generating the first element of the chain.
 include(rootdir*"/cpufunctions/warm_start_searchdelta_justcvex_IU.jl")  ## expected value is zero, there may be numerical error
-print("warm start ready!")
-
-
+print("chain initialization is ready!")
+# Reloading the random seed.
 Random.seed!(123)
-
+# Generating d. Since here theta0=1, d=1 a.s.
 Delta=rand(n)*(1-theta0).+theta0
+# Chain generation.
 gchaincu!(theta0,gammav0,cve,rho,chainM)
 print("chain ready!")
 
-
-###########################################################################3
-################################################################################################
 ## Optimization step in cuda
-
 chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
 chainMcu=cu(chainMnew)
+## Loading the objective functions in CUDA.
 include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
 ################################################################################################
-## This initial gamma was the product of a brute force search
+## This initial gamma was the product of a brute force search.
 trygamma=[-0.021066491;-0.131420248;-0.176570465;-0.061012596;59.08582226;42.73604072;19.77651024]
 Random.seed!(123)
 guessgamma=trygamma
-
+# NLopt calling BOBYQA optimizer.
 opt=NLopt.Opt(:LN_BOBYQA,dg)
 toluser=0.0
+# Bounds for gamma.
 NLopt.lower_bounds!(opt,ones(dg).*-Inf)
 NLopt.upper_bounds!(opt,ones(dg).*Inf)
+# Setting up the tolerance level.
 NLopt.xtol_rel!(opt,toluser)
 NLopt.xtol_abs!(opt,toluser)
+# Optimizing in NLopt, objMCcu is idenical to objMCcu2c except that it is written as required for NLopt.
 NLopt.min_objective!(opt,objMCcu)
+# Getting (Objective value, optimal gamma, status of optimizer).
 (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
 TSMC=2*minf*n
 println(TSMC)
@@ -149,12 +121,9 @@ solvegamma=minx
 guessgamma=solvegamma
 ret
 
-
-
-
-
+## Saving the Output
 Results1=DataFrame([theta0 TSMC])
-names!(Results1,Symbol.(["theta0","TSGMMcueMC"]))
+names!(Results1,Symbol.(["theta0","TS"]))
 Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
 
 CSV.write(diroutput*"/E1_IU_TS_cuda_$theta0.chain_$nfast.csv",Results1)

@@ -15,7 +15,6 @@ theta0=.975
 ## Setting-up directory
 tempdir1=@__DIR__
 repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
-appname="FirstApp"
 rootdir=repdir*"/Appendix_E/Appendix_E2"
 diroutput=repdir*"/Output_all/Appendix"
 dirdata=repdir*"/Data_all"

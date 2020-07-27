@@ -12,8 +12,6 @@ function preobjMCcu(gamma,chainMcu,valf,geta,gtry,dvecM,logunif)
     index = (blockIdx().x - 1) * blockDim().x + threadIdx().x
 
     stride = blockDim().x * gridDim().x
-
-
     for i=index:stride:n
         for j=1:nfast
             valf[i]=0.0
