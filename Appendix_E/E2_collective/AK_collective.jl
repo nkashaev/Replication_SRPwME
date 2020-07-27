@@ -7,7 +7,6 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
 using CSV
 using NLopt
@@ -20,7 +19,9 @@ using Ipopt
 theta0=.975
 
 ## Setting-up directory
-repdir="C:/Users/vaguiar/Dropbox/ReplicationAK" # To run replication code on a different machine change the path
+## Setting-up directory
+tempdir1=@__DIR__
+repdir=tempdir1[1:findfirst("ReplicationAK",tempdir1)[end]]
 appname="Appendix_E/E2_collective"
 rootdir=repdir*"/"*appname
 diroutput=repdir*"/Output_all/Appendix"

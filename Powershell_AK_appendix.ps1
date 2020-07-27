@@ -4,24 +4,11 @@ Start-Transcript
 ##Singles
 Write-Host "COLLECTIVE"
 
-Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_main_0.975.jl"}
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_main_0.1.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_main_0.5.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_main_0.9.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_main_1.0.jl"
+D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\Appendix_E\E2_collective\AK_collective.jl"
+#Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\Appendix_E\E2_collective\AK_collective.jl"}
 
-Write-Host "SINGLES RECOVER"
+Write-Host "INCOME UNCERTAINTY"
 
 ##Singles Recover Delta
-Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.996.jl"}
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.995.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\singles\1App_singles_ADF_0.994.jl"
 
 
-##Couples
-Write-Host "COUPLES"
-
-Measure-Command { D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\couples\1App_couples_main_0.1.jl"}
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\couples\1App_couples_main_0.5.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\couples\1App_couples_main_0.9.jl"
-D:\Julia-1.1.1\bin\julia.exe "C:\Users\vaguiar\Documents\GitHub\ReplicationAK\FirstApp\couples\1App_couples_main_1.0.jl"
