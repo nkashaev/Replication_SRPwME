@@ -27,15 +27,14 @@ if machine=="nailmachine"
   dirresults=rootdir*"/results"
 end
 
-## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
-# set burn, if needed
+## Because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
+# If needed, one can set burnrate.
 burnrate=0
 nsimsp=29
-##
+## Running the code.
 include(rootdir*"/tremblinghand/2App_th_main.jl")
-#########################################################################
-## Export
+
+## Saving Output.
+totalnsims=nsimsp*nprocs
 DFsolv=convert(DataFrame,results)
-CSV.write(dirresults*"//2App_th_reps_580.csv",DFsolv)
-##########################################################################
-##########################################################################
+CSV.write(dirresults*"//2App_th_reps_$totalnsims.csv",DFsolv)
