@@ -7,15 +7,10 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
 using CSV
 using NLopt
 using BlackBoxOptim
-using Optim
-#using JuMP
-#using Ipopt
-#using OptimPack
 
 ## Lower bound for the support of the discount factor of both members of the household
 theta0=1.0
