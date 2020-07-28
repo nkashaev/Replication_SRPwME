@@ -138,6 +138,6 @@ solvegamma=minx
 ## Saving the Output
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TS"]))
-CSV.write(diroutput*"/AK_collective_TS_cuda_$theta0.csv",Results1)
+CSV.write(diroutput*"/E2_TS.csv",Results1)
 
 print(Results1)

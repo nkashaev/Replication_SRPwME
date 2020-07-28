@@ -1,8 +1,3 @@
-###Author: Victor H. Aguiar and Nail Kashaev
-###email: vhaguiar@gmail.com
-## Version: JULIA 1.1.1 (2020-06-28)
-
-################################################################################
 ## Loading Packages and setting up procesors
 using LinearAlgebra
 using Random
@@ -114,16 +109,8 @@ println(TSMC)
 
 solvegamma=minx
 guessgamma=solvegamma
-ret
 
 ## Saving the Output
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TS"]))
-Results1gamma=DataFrame(hcat(solvegamma,solvegamma))
-
-CSV.write(diroutput*"/E1_IU_TS_cuda_$theta0.chain_$nfast.csv",Results1)
-CSV.write(diroutput*"/E1_IU_gamma_cuda_$theta0.chain_$nfast.csv",Results1gamma)
-
-Results1
-
-print(Results1)
+CSV.write(diroutput*"/E1_TS.csv",Results1)
