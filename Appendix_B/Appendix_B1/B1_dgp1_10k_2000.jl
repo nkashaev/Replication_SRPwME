@@ -1,14 +1,3 @@
-# ###Author: Victor H. Aguiar and Nail Kashaev
-# ###email: vhaguiar@gmail.com
-# ## Version: JULIA 1.1.0 (2019-01-21)
-#
-# ################################################################################
-# ## Loading Packages and setting up procesors
-###Author: Victor H. Aguiar and Nail Kashaev
-###email: vhaguiar@gmail.com
-## Version: JULIA 1.1.0 (2019-01-21)
-
-################################################################################
 ## Loading Packages and setting up procesors
 using LinearAlgebra
 using Random
@@ -34,41 +23,33 @@ using ECOS
 using SoftGlobalScope
 
 ###############################################################################
-## DGP1
-##
-# data size
-##seed
+## Number of time periods
 const T=4
+# Number of moment conditions (degrees of freedom)
 const dg=4
-
-
-###############################################################################
-#Simulation sample size
+# Simulation sample size
 const n=2000
-
-## time length of the original data
+# Number of time periods in the original data
 T0=4
-## number of goods
+# Number of goods
 const K=17
-#chain length
-const repn=(0,10000)
-
-chainM=zeros(n,dg,repn[2])
+## MCMC Chain length.
+# Burning is optional.
+const repn=(0,10000)        #repn=(burn,number_simulations)
+chainM=zeros(n,dg,repn[2])  # Initializing MCMC chain
+# nfast is the number of draws from eta.
 const nfast=10000
+# Passing the draws from eta to CUDA.
 chainMcu=cu(chainM[:,:,1:nfast])
-
+# Lower bound of the support of the discount factor
 theta0=.8
 
-
-
+## This function simulates the data and computes the value of TS
 function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
-
-
-
-    npower=1000
+    npower=1000 # Number of simulations.
+    # Setting-up the output file
     Resultspower=DataFrame(hcat(ones(npower),zeros(npower)))
     names!(Resultspower,Symbol.(["iter","TSGMMcueMC"]))
-
 
     ## Setting-up directory
     tempdir1=@__DIR__
@@ -79,14 +60,13 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
     dirdata=repdir*"/Data_all"
 
     ## data size
-    # Sample size
+    # Sample size of the original data
     nold=2004
     # Number of time periods
     T=4
     # Number of goods
     K=17
     ## Repetitions for the integration step
-
     dg=T              # dg=degrees of freedom
 
     ###############################################################################
@@ -110,32 +90,26 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
     ################################################################################
     ## Main functions loading and initialization
-
     ################################################################################
-    ## moments
-    ## Moment: my function
+    ## Moment: g(x,e).
     include(rootdir*"/cpufunctions/myfun.jl")
-    ## chain generation with CUDA
+    ## Chain generation with CUDA.
     chainM[:,:,:]=zeros(n,dg,repn[2])
     include(rootdir*"/cudafunctions/cuda_chainfun.jl")
-    ## optimization with CUDA
+    ## Optimization with CUDA.
     numblocks = ceil(Int, n/100)
     include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
     print("functions loaded!")
 
-
-
-
     @softscope for ri=1:npower
+            #Fixing the seed.
             Random.seed!(123*ri)
+            # Sampling prices from the original data.
             indsim=rand(1:2004,n)
             p=ptemp[indsim,:,:]
             rv=rvtemp[indsim,:]
 
-
-
-
-            ## Discounted prices
+            ## Discounted simulated prices.
             rho=zeros(n,T,K)
             for i=1:n
               for t=1:T0
@@ -145,7 +119,8 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             rhoold=rho
 
             ###########################################################################################
-            ## Data generation DGP1
+            ## Data generation.
+            # Generating consumption.
             cve=zeros(n,T,K)
             dlow=.8
             deltasim=rand(n).*(1-dlow).+dlow
@@ -164,11 +139,12 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                  end
                end
              end
-
+            # This rescaling does not affect the Affriat inequalities and the moment conditions.
+            # It is only needed for to speed up the simulation and for stability of the numerical performance
             cve=cve/1e5
 
 
-            print("load data ready!")
+            print("Data is ready!")
 
 
             ################################################################################
@@ -222,10 +198,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
                     optimval[id,dt]=modvex.optval
 
-
-
                     aiverify=zeros(n,T,T)
-
 
                     Delta[id]=Deltatemp[id]
                     for i=1:T
@@ -235,13 +208,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
                         end
                     end
-
-
-
-
-
-
-
 
                     for t=1:T
                         for s=1:T
@@ -331,7 +297,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/B_power_dgp1_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/B1_dgp1_chain_$repn.sample_$n.csv",Resultspower)
             GC.gc()
 
 
