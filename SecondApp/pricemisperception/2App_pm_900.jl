@@ -156,23 +156,6 @@ include(rootdir*"/secondappfunctions/jumpfun_price.jl")
 
 ## The Montecarlo step: It gives the integrated moments h
 ## This code follows Schennach's code in Gauss in the Supplement in ECMA for ELVIS.
-@everywhere function gavg(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
-  eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
-  r=-repn[1]+1
-  while r<=repn[2]
-      tryun=jumpfun(d=d,gamma=gamma,cve=cve,rho=rho)
-      logtrydens=myfun(d=d,gamma=gamma,eta=tryun,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)*gamma-myfun(d=d,gamma=gamma,eta=eta,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)*gamma
-      dum=log.(rand(n)).<logtrydens
-      @inbounds eta[dum,:]=tryun[dum,:]
-      if r>0
-        a=a+myfun(d=d,gamma=gamma,eta=eta,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)
-      end
-      r=r+1
-    end
-    sum(a,dims=1)/repn[2]
-end
-
-
 ##moments for generating the variance matrix: It generates the h and the g moments without averaging for building Omega.
 @everywhere function gavraw(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
@@ -190,13 +173,6 @@ end
     a/repn[2]
 end
 
-## This function wraps up gavg for parallelization, here it is just a wrapper.
-@everywhere function dvecf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
-  dvec0= @sync @distributed (+) for i=1:nprocs0
-    gavg(d=d,gamma=gamma,myfun=myfun,guessfun=guessfun,jumpfun=jumpfun,repn=repn,a=a,gvec=gvec,tryun=tryun,trydens=trydens,eta=eta,U=U,W=W,dummf=dummf,cve=cve,rho=rho)
-  end
-  dvec0/nprocs0
-end
 
 ## This function wraps up gavraw for parallelization, here it is just a wrapper.
 @everywhere function dgavf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
@@ -232,11 +208,6 @@ trydens=zeros(n)
 i=1
 ind=1
 d0=1.0
-
-gammav0=randn(dg)
-
-
-
 #########################################################################
 ## Weighted Objective
 
