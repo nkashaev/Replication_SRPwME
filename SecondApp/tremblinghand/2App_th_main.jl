@@ -1,5 +1,5 @@
 # Sample size.
-@everywhere  n=154
+@everywhere  const n=154
 # Number of time periods.
 @everywhere const T=50
 # Number of goods.
@@ -17,9 +17,9 @@ dum0=CSV.read(dir*"/rationalitydata3goods.csv")
 splitdum0=groupby(dum0,:id)
 @eval @everywhere splitp=$splitdum0
 #Initialize array of effective prices. For this application \rho= p.
-@everywhere  rho=zeros(n,T,K)
+@everywhere  const rho=zeros(n,T,K).*1.0
 #Initialize array of consumption.
-@everywhere  cve=zeros(n,T,K)
+@everywhere  const cve=zeros(n,T,K).*1.0
 #Fill the arrays
 # Columns 10-12 correspond to prices.
 # Columns 4-6 correspond to consumption bundles.
@@ -31,7 +31,7 @@ end
 ################################################################################
 ## Output for simulations parameters.
 # Number of moments: w^p\in R^(T*K).
-@everywhere dg=T*K
+@everywhere const dg=T*K
 @everywhere nsims=1
 @everywhere ndelta=1
 @everywhere solv=zeros(nsims,ndelta)
@@ -143,7 +143,7 @@ trydens=zeros(n)
 i=1
 ind=1
 d0=1.0
-gammav0=randn(dg)
+
 # Weighted Objective
 function obj2(gamma0::Vector, grad::Vector)
   if length(grad) > 0
