@@ -292,6 +292,6 @@ results=hcat(solvw[1,:],solvwgamma[1,:,:])
 #########################################################################
 ## Export
 DFsolv=convert(DataFrame,results)
-CSV.write(dirresults*"/AK_Footnote_55_experimental_price_misperception_reps_900.csv",DFsolv)
+CSV.write(dirresults*"/2App_pm_reps_900.csv",DFsolv)
 ##########################################################################
 ##########################################################################
