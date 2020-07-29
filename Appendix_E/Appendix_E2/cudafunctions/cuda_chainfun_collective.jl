@@ -7,38 +7,32 @@ using CUDAdrv
 ## desc: passes the discount factors from the cpu to the gpu
 
 function new_delta_collecive_cu!(d,DeltaA,DeltaB,vsimA,vsimB,cvesim,rho,DeltacA,DeltacB,isim,unif1)
-
   DeltacA[isim]=DeltaA[isim]*1.0
   DeltacB[isim]=DeltaB[isim]*1.0
-
-
   return nothing
 end
 
 ##New vsim and cvesim generator
 ## desc: takes as arguments consistent values of delta and then genertes new values of consumption satisfying collective inequalities
-
 ##Collective VCU
 function new_VC_collective_cu!(VC,P,dVC,DeltaA,DeltaB,vsimcA,vsimcB,cvesimc,isim,unif2)
   # given the initial matrix VC and prices P
   # the function samples from the polytope uniformly
-
   thetamin=-10.0^6 #initial upperbound
   thetamax=10.0^6 #initial lowerbound
   #Generating random direction
   # #Box constraints
 
   #box constraints do not include v numbers, but included without loss of generality
-     for i=1:(K+1)
-       for j=1:T
-           if dVC[isim,j,i]<0
+  for i=1:(K+1)
+      for j=1:T
+          if dVC[isim,j,i]<0
                  thetamax=thetamax < -(VC[isim,j,i]/dVC[isim,j,i]) ? thetamax : -(VC[isim,j,i]/dVC[isim,j,i])
-           else
+          else
                  thetamin=thetamin > -(VC[isim,j,i]/dVC[isim,j,i]) ? thetamin : -(VC[isim,j,i]/dVC[isim,j,i])
-
-           end
-       end
-   end
+          end
+      end
+  end
   # #Afriat constraints
    for i=1:T
        for j=1:T
