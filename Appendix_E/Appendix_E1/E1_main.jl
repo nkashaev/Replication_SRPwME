@@ -110,7 +110,15 @@ println(TSMC)
 solvegamma=minx
 guessgamma=solvegamma
 
+(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+TSMC=2*minf*n
+println(TSMC)
+
+solvegamma=minx
+guessgamma=solvegamma
+
 ## Saving the Output
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TS"]))
 CSV.write(diroutput*"/E1_TS.csv",Results1)
+print("success!")
