@@ -6,8 +6,6 @@ using CUDAdrv
 function new_lambdacu!(d,Lambda,vsim,cvesim,rho,Lambdac,isim,unif1)
     Lambdac[isim,1]=1.0
     for t=2:T
-        #thetamin=0.0000001
-        #thetamax=1000000*1.0
         thetamin=0.9000001
         thetamax=1.100000*1.0
 

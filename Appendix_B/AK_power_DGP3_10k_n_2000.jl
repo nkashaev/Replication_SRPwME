@@ -270,7 +270,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-            
+
             minimum(aiverify2)
             print("warm start ready!")
 
@@ -348,7 +348,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/power_dgp3_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/B_power_dgp3_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
             GC.gc()
 
 

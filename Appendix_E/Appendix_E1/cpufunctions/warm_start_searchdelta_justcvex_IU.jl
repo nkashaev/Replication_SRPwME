@@ -1,15 +1,10 @@
 ##Guess quadratic program
 using Convex
-using SCS
-using JuMP
-using Ipopt
-#using CPLEX
-using Clp
 using ECOS
 
 # Formulate and solve a simple quadratic problem:
-#     max ||g|| st. Afriat inequalities for lambda=1
-# """
+#     min ||g|| st. Afriat inequalities for lambda=1
+
 ndelta=1
 lambdavec=ones(T,ndelta)
 
@@ -20,9 +15,8 @@ cvesim=zeros(n,T,K)
 vsim=zeros(n,T)
 optimval=ones(n,ndelta+1)*10000
 
-Kb=0
+
 aiverify2=zeros(n,T,T)
-#for id=1:n
 v=Variable(T, Positive())
 c=Variable(T,K,Positive())
 P=I+zeros(1,1)
@@ -32,10 +26,6 @@ P=I+zeros(1,1)
 for dt=2:ndelta+1
     for id=1:n
         Lambdatemp[id,:]=lambdavec[:,dt-1]
-
-
-
-        #    return Delta, Alpha, W, vsim, cvesim
 
 
         modvex=minimize(quadform(rho[id,1,:]'*(c[1,:]'-cve[id,1,:]),P)+quadform(rho[id,2,:]'*(c[2,:]'-cve[id,2,:]),P)+quadform(rho[id,3,:]'*(c[3,:]'-cve[id,3,:]),P)+quadform(rho[id,4,:]'*(c[4,:]'-cve[id,4,:]),P))
@@ -63,12 +53,6 @@ for dt=2:ndelta+1
 
             end
         end
-
-
-
-
-
-
 
 
         for t=1:T

@@ -1,82 +1,36 @@
-#Version Julia "1.1.0"
-#Author: Victor H. Aguiar & Nail Kashaev
-#email: vhaguiar@gmail.com
-
-count = 0
-#Set the number of processors: Change it to the max the computer allows
-nprocs=30
-using Distributed
-addprocs(nprocs)
-@everywhere Distributed
-@everywhere using Random
-# Set a random seed in each processor
-
-@everywhere using NLopt
-@everywhere using DataFrames
-@everywhere using MathProgBase
-using CSV
-@everywhere using RCall
-@everywhere using LinearAlgebra
-## set directory
-machine="niagara"
-if machine=="niagara"
-  rootdir="/gpfs/fs1/home/v/vaguiar/vaguiar/ReplicationAK/SecondApp"
-  dir=rootdir*"/data"
-  dirresults="/gpfs/fs0/scratch/v/vaguiar/vaguiar/results"
-end
-#results file
-if machine=="nailmachine"
-  ##the following line is eliminated in case the installation of Rcall happened correctly and there is only 1 installation of R
-  @everywhere ENV["R_HOME"]="C:\\Users\\Nkashaev\\Documents\\R\\R-3.4.4"
-  rootdir="C:/Users/Nkashaev/Dropbox/ReplicationAK/SecondApp"
-  dir=rootdir*"/data"
-  dirresults=rootdir*"/results"
-end
-
-# data size
+# Sample size.
 @everywhere  n=154
-
-## time length
+# Number of time periods.
 @everywhere const T=50
-#@everywhere const T=4
-## number of goods
+# Number of goods.
 @everywhere const K=3
-# repetitions foreffective rejection sampling
-## because the simulations are done using parallel Montecarlo we have nsimps*nprocs draws.
-# set burn, if needed
-burnrate=0
-nsimsp=30
+# Number of simulations per processor and number of burned elements of rejection sampling.
 @everywhere const repn=($burnrate,$nsimsp)
 nsims=nsimsp*nprocs
-## Define the constant number of proccesors
+# Define the constant number of proccesors
 const nprocs0=nprocs
-
-
-# read csv files prepared in R from the original data in Ahn et al.
-# prices array
+################################################################################
+## Data
+# Read csv files prepared in R from the original data in Ahn et al. (2014).
 dum0=CSV.read(dir*"/rationalitydata3goods.csv")
-# break the dataset into subdatasets by individual
+# Break the dataset into individual datasets.
 splitdum0=groupby(dum0,:id)
 @eval @everywhere splitp=$splitdum0
-
-#Initialize array of effective prices, for this application \rho= p
+#Initialize array of effective prices. For this application \rho= p.
 @everywhere  rho=zeros(n,T,K)
-#Initialize array of consumption
+#Initialize array of consumption.
 @everywhere  cve=zeros(n,T,K)
-
 #Fill the arrays
-# Columns 10-12 correspond to prices
-# Columns 4:6 correspond to consumption bundles
+# Columns 10-12 correspond to prices.
+# Columns 4-6 correspond to consumption bundles.
 @everywhere for i=1:n
     dum0=convert(Array,splitp[i])
     rho[i,:,:]=dum0[1:T,10:12]
     cve[i,:,:]=dum0[1:T,4:6]
 end
-
-
-################################################################
-##Output for simulations parameters
-# Number of centering moments w^p\in R^(T*K)
+################################################################################
+## Output for simulations parameters.
+# Number of moments: w^p\in R^(T*K).
 @everywhere dg=T*K
 @everywhere nsims=1
 @everywhere ndelta=1
@@ -87,27 +41,14 @@ end
 AGs=zeros(nsims,ndelta,2)
 results=hcat(solv[1,:],solvw[1,:],solvgamma[1,:,:],solvwgamma[1,:,:])
 
+################################################################################
+## Main functions
+################################################################################
+##Moments Function.
+# This function is the moment function g(x,e).
+include(rootdir*"/secondappfunctions/myfun_th.jl")
 
-###########################################################
-### Main functions
-###########################################################
-
-## Centering Moments Function
-##Fast myfun
-#d.- discount factor, here it is set to 1.
-#gamma.- passing zero matrix of the (dg x 1) size
-#eta.- passes the simulated data, here it is equal to the simulated p^* (true price) satisfying GARP given quantities and budget constraints
-#U.- When active it passes utility numbers from the Afriat inequalities, here it is not active.
-#W.- passes zero array to be filled with the simulated error, here it is filled by the moments per each individual observation
-#gvec.- passes zero vector to be filled the average of moments
-#dummf.- auxiliary zero vector for the algorith; here not active
-#cve.- consumption array
-#rho.- effective price array
-
-## AK_myfunc_gabaix.jl tests for E[w^p]=0
-include(rootdir*"/secondappfunctions/myfun_pm.jl")
-
-## New Guess Functions: Constraint to satisfy pw=0 as.
+#New Guess Functions: Constraint to satisfy pw=0 as.
 @everywhere m=zeros(n,T)
 @everywhere mrep=zeros(n,T,K)
 @everywhere msim=zeros(n,T)
@@ -124,38 +65,14 @@ end
 @everywhere mmin=minimum(m)
 @everywhere ptest=ones(T,K)
 @everywhere wtest=ones(T,K)
+#Fuess function. Generates the initial draw of the Montecarlo step.
+include(rootdir*"/secondappfunctions/guessfun_quantity.jl")
 
-#Guessfun: gives the initial draw of the Montecarlo step, must be a simulations consistent with the null.
+## This function will draw new candidates for the Montecarlo. In this case this is the same as the guessfun.
+include(rootdir*"/secondappfunctions/jumpfun_quantity.jl")
 
-## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of p^* that satisfies GARP and in on the budget line.
-## The function allows to set an afriatpar that corresponds to the cost efficiency index. We set it to 1.
-#maxit is the max. number of iterations allowed by the sampler before it restarts.
-#R has to get a random seed.
-
-include(rootdir*"/secondappfunctions/guessfun_price.jl")
-
-
-## Here it invokes the revealedPrefsmod function simGarpQuantWealth, that will generate a draw of p^* that satisfies GARP and in on the budget line.
-## The function allows to set an afriatpar that corresponds to the cost efficiency index. We set it to 1.
-#maxit is the max. number of iterations allowed by the sampler before it restarts.
-#R has to get a random seed.
-#Do not pay attention to the name of the files cvesim since it does not matter, in this case it is filled by prices
-#include(rootdir*"/AK_guessfunc_quantityexperimental.jl")
-
-
-
-###############################################################
-## New Fast jump
-## This function will draw new candidates for the Montecarlo, in this case this is the same as the guessfun.
-## The reason is that in this case, we can generate exactly data under the null of GARP plus being on the budget.
-
-## For prices
-include(rootdir*"/secondappfunctions/jumpfun_price.jl")
-
-
-
-## The Montecarlo step: It gives the integrated moments h
-## This code follows Schennach's code in Gauss in the Supplement in ECMA for ELVIS.
+## The Montecarlo step: It gives the integrated moments h.
+# This code follows Schennach's code in Gauss (Schennach, 2014).
 @everywhere function gavg(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
   r=-repn[1]+1
@@ -173,7 +90,7 @@ include(rootdir*"/secondappfunctions/jumpfun_price.jl")
 end
 
 
-##moments for generating the variance matrix: It generates the h and the g moments without averaging for building Omega.
+# Moments for generating the variance matrix: It generates h and g moments without averaging for building Omega.
 @everywhere function gavraw(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
   r=-repn[1]+1
@@ -190,7 +107,7 @@ end
     a/repn[2]
 end
 
-## This function wraps up gavg for parallelization, here it is just a wrapper.
+# These functions wrap up gavg and gavraw for parallelization.
 @everywhere function dvecf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   dvec0= @sync @distributed (+) for i=1:nprocs0
     gavg(d=d,gamma=gamma,myfun=myfun,guessfun=guessfun,jumpfun=jumpfun,repn=repn,a=a,gvec=gvec,tryun=tryun,trydens=trydens,eta=eta,U=U,W=W,dummf=dummf,cve=cve,rho=rho)
@@ -198,22 +115,17 @@ end
   dvec0/nprocs0
 end
 
-## This function wraps up gavraw for parallelization, here it is just a wrapper.
 @everywhere function dgavf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   dvec0= @sync @distributed (+) for i=1:nprocs0
     gavraw(d=d,gamma=gamma,myfun=myfun,guessfun=guessfun,jumpfun=jumpfun,repn=repn,a=a,gvec=gvec,tryun=tryun,trydens=trydens,eta=eta,U=U,W=W,dummf=dummf,cve=cve,rho=rho)
   end
   dvec0/nprocs0
 end
-
-## Specify the system tolerance for the optimization step in NLopt, set to 1e-6, for speed 1e-3 seems to be doing the same
+################################################################################
+## Optimization
+# Specify the system tolerance for the optimization step in NLopt
 @everywhere toluser=1e-6
-
-
-
-##########################################################################
-##########################################################################
-## Initialize memory matrices
+# Initialize memory matrices
 cdums=zeros(n,K)
 gvec=zeros(n,(dg))
 dummf=zeros(n,T,T)
@@ -226,21 +138,13 @@ tryun=zeros(n,(dg))
 eta=zeros(n,(dg))
 trydens=zeros(n)
 
-
-######################################################################
-## GMM
+# GMM
+# Setting the initial parameters.  Needed for compilation of functions below.
 i=1
 ind=1
 d0=1.0
-
 gammav0=randn(dg)
-
-
-
-#########################################################################
-## Weighted Objective
-
-
+# Weighted Objective
 function obj2(gamma0::Vector, grad::Vector)
   if length(grad) > 0
   end
@@ -268,13 +172,12 @@ function obj2(gamma0::Vector, grad::Vector)
 end
 
 Random.seed!(3000)
+# Initial value of gamma
 gammav0=randn(dg)
-
 # Set a random seed in each processor
 @distributed for replicate_idx=1:nprocs
   Random.seed!(3000*replicate_idx)
 end
-
 
 opt=NLopt.Opt(:LN_BOBYQA,dg)
 NLopt.lower_bounds!(opt,vcat(ones(dg).*-Inf))
@@ -285,13 +188,4 @@ NLopt.min_objective!(opt,obj2)
 solvw[ind,i]=minf*2*n
 solvwgamma[ind,i,:]=minx
 
-
-
 results=hcat(solvw[1,:],solvwgamma[1,:,:])
-
-#########################################################################
-## Export
-DFsolv=convert(DataFrame,results)
-CSV.write(dirresults*"/AK_Footnote_55_experimental_price_misperception_reps_900.csv",DFsolv)
-##########################################################################
-##########################################################################

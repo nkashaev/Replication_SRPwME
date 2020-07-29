@@ -9,10 +9,6 @@ using Distributed
 addprocs(nprocs)
 @everywhere Distributed
 @everywhere using Random
-# # Set a random seed in each processor
-# @distributed for replicate_idx=1:nprocs
-#   Random.seed!(3000*replicate_idx)
-# end
 @everywhere using NLopt
 @everywhere using DataFrames
 @everywhere using MathProgBase
@@ -283,9 +279,7 @@ opt=NLopt.Opt(:LN_BOBYQA,dg)
 NLopt.lower_bounds!(opt,vcat(ones(dg).*-Inf))
 NLopt.upper_bounds!(opt,vcat(ones(dg).*Inf))
 NLopt.xtol_rel!(opt,toluser)
-NLopt.min_objective!(opt,obj2)
-# Random.seed!(3000)
-# gammav0=randn(dg)
+NLopt.min_objective!(opt,obj2)				 
 (minf,minx,ret) = NLopt.optimize!(opt, gammav0)
 solvw[ind,i]=minf*2*n
 solvwgamma[ind,i,:]=minx
