@@ -51,8 +51,10 @@ targetgood=10
 # Price change
 target=10
 
+const rho=zeros(n,T,K)
+const cve=zeros(n,T,K)
 
-function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target,rho,cve)
 
     # Values for kappa.
     kapvec=[1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07 1.08 1.09 1.10]
@@ -123,7 +125,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             kap=kapvec[ki]
             bshare=gridvec[ri]
             ## Discounted prices
-            rho=zeros(n,T,K)
+            #rho=zeros(n,T,K)
             for i=1:n
               for t=1:T0
                 rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
@@ -139,7 +141,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             end
 
             ## Set Consumption. We initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
-            cve=zeros(n,T,K)
+            #cve=zeros(n,T,K)
             cve[:,1:T0,:]=cvetemp
             cve[:,T,:]=cvetemp[:,T0,:]
             cve
@@ -263,8 +265,8 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
 end
 
 try
-    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target,rho,cve)
 catch
     @warn "Cuda needs a second run."
-    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+    Results=counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target,rho,cve)
 end
