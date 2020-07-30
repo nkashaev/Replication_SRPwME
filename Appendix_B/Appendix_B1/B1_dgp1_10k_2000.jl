@@ -141,18 +141,12 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
 
             ################################################################################
-            ## Initializing
-
-            ###########################################
-
+            ## Fixing random seed for the random number generator.
             Random.seed!(123*ri)
+            ## Initializing gamma.
             gammav0=zeros(dg)
-
-
-
-
             #####################################################################################
-            ## warmstart
+            # Generating the first element of the chain.
             deltavec=[1.0]
             ndelta=length(deltavec)
 
@@ -168,17 +162,9 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             c=Variable(T,K,Positive())
             P=I+zeros(1,1)
 
-
-
             for dt=2:ndelta+1
                 for id=1:n
                     Deltatemp[id]=deltavec[dt-1]
-
-
-
-                    #    return Delta, Alpha, W, vsim, cvesim
-
-
                     modvex=minimize(quadform(rho[id,1,:]'*(c[1,:]'-cve[id,1,:]),P)+quadform(rho[id,2,:]'*(c[2,:]'-cve[id,2,:]),P)+quadform(rho[id,3,:]'*(c[3,:]'-cve[id,3,:]),P)+quadform(rho[id,4,:]'*(c[4,:]'-cve[id,4,:]),P))
                     for t=1:T
                         for s=1:T
@@ -197,7 +183,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                         vsim[id,i]=v.value[i]
                         for j=1:K
                             cvesim[id,i,j]=c.value[i,j]
-
                         end
                     end
 
@@ -206,11 +191,10 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                             aiverify2[id,t,s]=vsim[id,t]-vsim[id,s]-Delta[id]^(-(t-1))*rho[id,t,:]'*(cvesim[id,t,:]-cvesim[id,s,:])
                         end
                     end
-            end
+                end
                 modvex=nothing
                 GC.gc()
             end
-
 
             minimum(aiverify2)
             print("warm start ready!")
@@ -220,10 +204,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             gchaincu!(theta0,gammav0,cve,rho,chainM,Delta,vsim,cvesim,W)
             print("chain ready!")
 
-
-            ###########################################################################3
-            ################################################################################################
-            ## Optimization step in cuda
+            ## Optimization step in CUDA
             Random.seed!(123*ri)
             indfast=rand(1:repn[2],nfast)
             indfast[1]=1
@@ -231,12 +212,10 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             numblocks = ceil(Int, n/100)
             include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
 
-
             ###############################################################################
             ###############################################################################
             Random.seed!(123*ri)
             res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-
 
             minr=best_fitness(res)
             TSMC=2*minr*n
@@ -283,22 +262,15 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 ret
             end
 
-
-
-
         ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
             CSV.write(diroutput*"/B1_dgp1_chain_$repn.sample_$n.csv",Resultspower)
             GC.gc()
 
-
     end;
     Resultspower
 end
-
-
-
 
 try
     Results=powersimulations(chainM,chainMcu,theta0,n,repn,nfast)

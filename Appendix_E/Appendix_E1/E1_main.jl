@@ -78,7 +78,7 @@ Delta=rand(n)*(1-theta0).+theta0
 gchaincu!(theta0,gammav0,cve,rho,chainM)
 print("chain ready!")
 
-## Optimization step in cuda
+## Optimization step in CUDA
 chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
