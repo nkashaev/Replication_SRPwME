@@ -238,13 +238,10 @@ function obj2(gamma0::Vector, grad::Vector)
   return Qn2[1]
 end
 
-Random.seed!(3000)
-gammav0=randn(dg)
-
 # Set a random seed in each processor
-@distributed for replicate_idx=1:nprocs
-  Random.seed!(3000*replicate_idx)
-end
+# Each processor will generate different values because they call their own seeds in R
+@everywhere Random.seed!(3000)
+gammav0=randn(dg)
 
 
 opt=NLopt.Opt(:LN_BOBYQA,dg)
