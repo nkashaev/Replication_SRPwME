@@ -2,10 +2,7 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
-using JuMP
-using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
@@ -16,8 +13,6 @@ using CUDAnative
 using CUDAdrv
 #
 using Convex
-using SCS
-using Clp
 using ECOS
 
 using SoftGlobalScope
@@ -58,6 +53,7 @@ target=10
 
 
 function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+
     # Values for kappa.
     kapvec=[1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07 1.08 1.09 1.10]
     nkap=length(kapvec)
@@ -80,14 +76,14 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
     dirdata=repdir*"/Data_all"
 
     ################################################################################
-    T=5
-    dg=5
+    const T=5
+    const dg=5
 
     ###############################################################################
-    n=185
-    T0=4
-    K=17
-    repn=(0,10000)
+    const n=185
+    const T0=4
+    const K=17
+    const repn=(0,10000)
     ###############################################################################
     ## Data
     ###############################################################################
@@ -116,18 +112,19 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
     # Chain generation with CUDA.
     chainM[:,:,:]=zeros(n,dg,repn[2])
     include(rootdir*"/cudafunctions/cuda_chainfun.jl")
-    # Optimization with CUDA.
+    # Optimization with CUDA..
     numblocks = ceil(Int, n/100)
     chainMcu[:,:,:]=cu(chainM[:,:,indfast])
     include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
     print("functions are loaded!")
-
+    const rho=zeros(n,T,K)
+    const cve=zeros(n,T,K)
     @softscope for ki=1:nkap
         for ri=1:npower
             kap=kapvec[ki]
             bshare=gridvec[ri]
             ## Discounted prices
-            rho=zeros(n,T,K)
+
             for i=1:n
               for t=1:T0
                 rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
@@ -143,7 +140,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             end
 
             ## Set Consumption. We initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
-            cve=zeros(n,T,K)
+
             cve[:,1:T0,:]=cvetemp
             cve[:,T,:]=cvetemp[:,T0,:]
             cve
@@ -163,7 +160,6 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             cvesim=zeros(n,T,K)
             vsim=zeros(n,T)
             optimval=ones(n,ndelta+1)*10000
-            Kb=0
             aiverify2=zeros(n,T,T)
             v=Variable(T, Positive())
             c=Variable(T,K,Positive())
@@ -213,6 +209,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             ###########################################################################3
             ################################################################################################
             ## Optimization step in cuda
+            Random.seed!(123*ki*ri)
             chainMcu[:,:,:]=cu(chainM[:,:,indfast])
             include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
