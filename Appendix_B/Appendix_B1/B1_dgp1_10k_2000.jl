@@ -163,7 +163,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             vsim=zeros(n,T)
             optimval=ones(n,ndelta+1)*10000
 
-            Kb=0
             aiverify2=zeros(n,T,T)
             v=Variable(T, Positive())
             c=Variable(T,K,Positive())
