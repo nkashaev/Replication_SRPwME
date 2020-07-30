@@ -13,10 +13,7 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
-using JuMP
-using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
@@ -27,8 +24,6 @@ using CUDAnative
 using CUDAdrv
 #
 using Convex
-using SCS
-using Clp
 using ECOS
 
 using SoftGlobalScope
@@ -45,9 +40,6 @@ const dg=4
 ###############################################################################
 #Simulation sample size
 const n=2000
-
-## time length of the original data
-T0=4
 ## number of goods
 const K=17
 #chain length
@@ -138,7 +130,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             ## Discounted prices
             rho=zeros(n,T,K)
             for i=1:n
-              for t=1:T0
+              for t=1:T
                 rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
               end
             end

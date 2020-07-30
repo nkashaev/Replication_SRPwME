@@ -1,23 +1,18 @@
-## Loading Packages and setting up procesors
+## Loading general packages
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
-using JuMP
-using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
-#
+# CUDA packages
 using CuArrays
 using CuArrays.CURAND
 using CUDAnative
 using CUDAdrv
-#
+# warmstart packages
 using Convex
-using SCS
-using Clp
 using ECOS
 
 using SoftGlobalScope
@@ -29,8 +24,6 @@ const T=4
 const dg=4
 # Simulation sample size
 const n=2000
-# Number of time periods in the original data
-T0=4
 # Number of goods
 const K=17
 ## MCMC Chain length.
@@ -112,7 +105,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             ## Discounted simulated prices.
             rho=zeros(n,T,K)
             for i=1:n
-              for t=1:T0
+              for t=1:T
                 rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
               end
             end
