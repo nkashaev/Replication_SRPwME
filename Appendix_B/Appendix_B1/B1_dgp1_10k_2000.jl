@@ -52,7 +52,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
     diroutput=repdir*"/Output_all/Appendix"
     dirdata=repdir*"/Data_all"
 
-    ## data size
     # Sample size of the original data
     nold=2004
     # Number of time periods
@@ -101,7 +100,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             indsim=rand(1:2004,n)
             p=ptemp[indsim,:,:]
             rv=rvtemp[indsim,:]
-
             ## Discounted simulated prices.
             rho=zeros(n,T,K)
             for i=1:n
@@ -135,11 +133,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             # This rescaling does not affect the Affriat inequalities and the moment conditions.
             # It is only needed for to speed up the simulation and for stability of the numerical performance
             cve=cve/1e5
-
-
             print("Data is ready!")
-
-
             ################################################################################
             ## Fixing random seed for the random number generator.
             Random.seed!(123*ri)
@@ -149,19 +143,16 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             # Generating the first element of the chain.
             deltavec=[1.0]
             ndelta=length(deltavec)
-
             Delta=zeros(n)
             Deltatemp=zeros(n)
             W=ones(n,T,K)
             cvesim=zeros(n,T,K)
             vsim=zeros(n,T)
             optimval=ones(n,ndelta+1)*10000
-
             aiverify2=zeros(n,T,T)
             v=Variable(T, Positive())
             c=Variable(T,K,Positive())
             P=I+zeros(1,1)
-
             for dt=2:ndelta+1
                 for id=1:n
                     Deltatemp[id]=deltavec[dt-1]
@@ -171,13 +162,9 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                             modvex.constraints+=v[t]-v[s]-Deltatemp[id]^(-(t-1))*rho[id,t,:]'*(c[t,:]'-c[s,:]')>=0
                         end
                     end
-
                     solve!(modvex,ECOSSolver(verbose=false))
-
                     optimval[id,dt]=modvex.optval
-
                     aiverify=zeros(n,T,T)
-
                     Delta[id]=Deltatemp[id]
                     for i=1:T
                         vsim[id,i]=v.value[i]
@@ -195,7 +182,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 modvex=nothing
                 GC.gc()
             end
-
             minimum(aiverify2)
             print("warm start ready!")
 
@@ -203,7 +189,6 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             println(ri)
             gchaincu!(theta0,gammav0,cve,rho,chainM,Delta,vsim,cvesim,W)
             print("chain ready!")
-
             ## Optimization step in CUDA
             Random.seed!(123*ri)
             indfast=rand(1:repn[2],nfast)
@@ -211,20 +196,16 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
             chainMcu[:,:,:]=cu(chainM[:,:,indfast])
             numblocks = ceil(Int, n/100)
             include(rootdir*"/cudafunctions/cuda_fastoptim.jl")
-
             ###############################################################################
             ###############################################################################
             Random.seed!(123*ri)
             res = bboptimize(objMCcu2; SearchRange = (-10e300,10e300), NumDimensions = dg,MaxTime = 100.0, TraceMode=:silent)
-
             minr=best_fitness(res)
             TSMC=2*minr*n
             TSMC
             guessgamma=best_candidate(res)
-
             ###############################################################################
             ###############################################################################
-
             if (TSMC>=9.5)
                 opt=NLopt.Opt(:LN_BOBYQA,dg)
                 toluser=1e-6
@@ -237,13 +218,11 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 TSMC
                 solvegamma=minx
                 print(ret)
-
                 guessgamma=solvegamma
                 ret
             end
             if (TSMC>=9.5)
                 ##try 2
-
                 (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
                 TSMC=2*minf*n
                 TSMC
@@ -251,9 +230,8 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 guessgamma=solvegamma
                 ret
             end
-
-            #try 3
             if (TSMC>= 9.5)
+                #try 3
                 (minf,minx,ret) = NLopt.optimize(opt, guessgamma)
                 TSMC=2*minf*n
                 TSMC
@@ -262,12 +240,10 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                 ret
             end
 
-        ########
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
             CSV.write(diroutput*"/B1_dgp1_chain_$repn.sample_$n.csv",Resultspower)
             GC.gc()
-
     end;
     Resultspower
 end
