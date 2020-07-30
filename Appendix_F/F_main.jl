@@ -58,6 +58,7 @@ target=10
 
 
 function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
+
     # Values for kappa.
     kapvec=[1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07 1.08 1.09 1.10]
     nkap=length(kapvec)
@@ -116,7 +117,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
     # Chain generation with CUDA.
     chainM[:,:,:]=zeros(n,dg,repn[2])
     include(rootdir*"/cudafunctions/cuda_chainfun.jl")
-    # Optimization with CUDA.
+    # Optimization with CUDA..
     numblocks = ceil(Int, n/100)
     chainMcu[:,:,:]=cu(chainM[:,:,indfast])
     include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
@@ -213,6 +214,7 @@ function counterbounds(chainM,chainMcu,indfast,theta0,targetgood,target)
             ###########################################################################3
             ################################################################################################
             ## Optimization step in cuda
+            Random.seed!(123*ki*ri)
             chainMcu[:,:,:]=cu(chainM[:,:,indfast])
             include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 
