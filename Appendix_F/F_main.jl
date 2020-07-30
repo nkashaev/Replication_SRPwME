@@ -2,10 +2,7 @@
 using LinearAlgebra
 using Random
 using MathProgBase
-using Clp
 using DataFrames
-using JuMP
-using Ipopt
 using CSV
 using NLopt
 using BlackBoxOptim
@@ -16,8 +13,6 @@ using CUDAnative
 using CUDAdrv
 #
 using Convex
-using SCS
-using Clp
 using ECOS
 
 using SoftGlobalScope
