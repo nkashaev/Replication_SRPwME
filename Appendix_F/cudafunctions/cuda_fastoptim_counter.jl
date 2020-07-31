@@ -39,6 +39,7 @@ function objMCcu(gamma0::Vector, grad::Vector)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
+  Random.seed!(123*ki*ri)
   @inbounds logunif[:]=log.(curand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
@@ -71,6 +72,7 @@ function objMCcu2c(gamma0)
   @inbounds geta[:]=0
   @inbounds gtry[:]=0
   @inbounds geta[:,:]=chainMcu[:,:,1]
+  Random.seed!(123*ki*ri)
   @inbounds logunif[:]=log.(curand(n,nfast))
   dvecM=cu(zeros(n,dg))
   valf[:]=0
