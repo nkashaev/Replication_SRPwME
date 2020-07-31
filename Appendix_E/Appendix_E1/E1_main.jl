@@ -78,7 +78,7 @@ Delta=rand(n)*(1-theta0).+theta0
 gchaincu!(theta0,gammav0,cve,rho,chainM)
 print("chain ready!")
 
-## Optimization step in cuda
+## Optimization step in CUDA
 chainMnew=chainM[:,:,indfast]
 chainM=nothing
 GC.gc()
@@ -110,7 +110,15 @@ println(TSMC)
 solvegamma=minx
 guessgamma=solvegamma
 
+(minf,minx,ret) = NLopt.optimize(opt, guessgamma)
+TSMC=2*minf*n
+println(TSMC)
+
+solvegamma=minx
+guessgamma=solvegamma
+
 ## Saving the Output
 Results1=DataFrame([theta0 TSMC])
 names!(Results1,Symbol.(["theta0","TS"]))
 CSV.write(diroutput*"/E1_TS.csv",Results1)
+print("success!")

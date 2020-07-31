@@ -1,5 +1,5 @@
 # Sample size.
-@everywhere  n=154
+@everywhere  const n=154
 # Number of time periods.
 @everywhere const T=50
 # Number of goods.
@@ -17,9 +17,9 @@ dum0=CSV.read(dir*"/rationalitydata3goods.csv")
 splitdum0=groupby(dum0,:id)
 @eval @everywhere splitp=$splitdum0
 #Initialize array of effective prices. For this application \rho= p.
-@everywhere  rho=zeros(n,T,K)
+@everywhere  const rho=zeros(n,T,K).*1.0
 #Initialize array of consumption.
-@everywhere  cve=zeros(n,T,K)
+@everywhere  const cve=zeros(n,T,K).*1.0
 #Fill the arrays
 # Columns 10-12 correspond to prices.
 # Columns 4-6 correspond to consumption bundles.
@@ -31,7 +31,7 @@ end
 ################################################################################
 ## Output for simulations parameters.
 # Number of moments: w^p\in R^(T*K).
-@everywhere dg=T*K
+@everywhere const dg=T*K
 @everywhere nsims=1
 @everywhere ndelta=1
 @everywhere solv=zeros(nsims,ndelta)
@@ -73,22 +73,6 @@ include(rootdir*"/secondappfunctions/jumpfun_quantity.jl")
 
 ## The Montecarlo step: It gives the integrated moments h.
 # This code follows Schennach's code in Gauss (Schennach, 2014).
-@everywhere function gavg(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
-  eta=guessfun(d=d,gamma=gamma,cve=cve,rho=rho)
-  r=-repn[1]+1
-  while r<=repn[2]
-      tryun=jumpfun(d=d,gamma=gamma,cve=cve,rho=rho)
-      logtrydens=myfun(d=d,gamma=gamma,eta=tryun,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)*gamma-myfun(d=d,gamma=gamma,eta=eta,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)*gamma
-      dum=log.(rand(n)).<logtrydens
-      @inbounds eta[dum,:]=tryun[dum,:]
-      if r>0
-        a=a+myfun(d=d,gamma=gamma,eta=eta,U=U,W=W,gvec=gvec,dummf=dummf,cve=cve,rho=rho)
-      end
-      r=r+1
-    end
-    sum(a,dims=1)/repn[2]
-end
-
 
 # Moments for generating the variance matrix: It generates h and g moments without averaging for building Omega.
 @everywhere function gavraw(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
@@ -107,16 +91,11 @@ end
     a/repn[2]
 end
 
-# These functions wrap up gavg and gavraw for parallelization.
-@everywhere function dvecf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
-  dvec0= @sync @distributed (+) for i=1:nprocs0
-    gavg(d=d,gamma=gamma,myfun=myfun,guessfun=guessfun,jumpfun=jumpfun,repn=repn,a=a,gvec=gvec,tryun=tryun,trydens=trydens,eta=eta,U=U,W=W,dummf=dummf,cve=cve,rho=rho)
-  end
-  dvec0/nprocs0
-end
+# These functions wrap up  gavraw for parallelization.
 
 @everywhere function dgavf(;d=d::Float64,gamma=gamma::Float64,myfun=myfun::Function,guessfun=guessfun::Function,jumpfun=jumpfun::Function,repn=repn,a=a::Array{Float64,2},gvec=gvec::Array{Float64,2},tryun=tryun::Array{Float64,2},trydens=trydens::Array64,eta=eta::Float64,U=U::Float64,W=W::Float64,dummf=dummf::Array{Float64,2},cve=cve::Float64,rho=rho::Float64)
   dvec0= @sync @distributed (+) for i=1:nprocs0
+    Random.seed!(3000*i+Int(ceil(maximum(gamma))))
     gavraw(d=d,gamma=gamma,myfun=myfun,guessfun=guessfun,jumpfun=jumpfun,repn=repn,a=a,gvec=gvec,tryun=tryun,trydens=trydens,eta=eta,U=U,W=W,dummf=dummf,cve=cve,rho=rho)
   end
   dvec0/nprocs0
@@ -143,7 +122,7 @@ trydens=zeros(n)
 i=1
 ind=1
 d0=1.0
-gammav0=randn(dg)
+
 # Weighted Objective
 function obj2(gamma0::Vector, grad::Vector)
   if length(grad) > 0
