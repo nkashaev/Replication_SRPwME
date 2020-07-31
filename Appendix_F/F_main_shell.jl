@@ -250,4 +250,5 @@ ret
 Resultspower[ri,2]=TSMC
 Resultspower[ri,1]=bshare
 CSV.write(diroutput*"/counter.good_$targetgood._price_$target._multiplier_$kap._cuda_start.$startit.end.$endit.theta0.$theta0.csv",Resultspower)
+println("success!")
 GC.gc()
