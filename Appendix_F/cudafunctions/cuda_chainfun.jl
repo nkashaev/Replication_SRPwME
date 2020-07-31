@@ -128,12 +128,12 @@ end
 
 
 function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
-    #unif1=curand(n).*(.999-.001).+.001
-    unif1=curand(n)
+    #unif1=CuArrays.rand(n).*(.999-.001).+.001
+    unif1=CuArrays.rand(n)
     v=curandn(n,T,(K+1))
     dVC=v./norm(v)
-    #unif2=curand(n).*(.999-.001).+.001
-    unif2=curand(n)
+    #unif2=CuArrays.rand(n).*(.999-.001).+.001
+    unif2=CuArrays.rand(n)
     numblocks = ceil(Int, n/167)
     @cuda threads=167 blocks=numblocks jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
     return Array(Deltac), Array(cve-cvesimc), Array(vsimc), Array(cvesimc)
