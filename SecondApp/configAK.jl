@@ -1,4 +1,4 @@
-
+using Pkg
 Pkg.add("NLopt")
 Pkg.add("DataFrames")
 Pkg.add("MathProgBase")
