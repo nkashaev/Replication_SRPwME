@@ -1,6 +1,0 @@
-module load gcc/7.3.0 hdf5 julia/1.4.1
- module load gcc/7.3.0 r/4.0.0
-
-/home/vaguiar/R/x86_64-pc-linux-gnu-library/4.0/
-
-install.packages(path_to_file="/home/vaguiar/ReplicationAK/SecondApp/revealedPrefsmod.tar", repos = NULL, type="source")

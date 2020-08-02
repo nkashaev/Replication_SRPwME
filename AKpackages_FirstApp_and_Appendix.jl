@@ -11,7 +11,6 @@ Pkg.add("ECOS")
 Pkg.add("CSV")
 Pkg.add("Distributions")
 Pkg.add("BlackBoxOptim")
-Pkg.add("SCS")
 Pkg.add("Ipopt")
 Pkg.add("SoftGlobalScope")
 

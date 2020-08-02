@@ -6,4 +6,4 @@
 #SBATCH --output=/gpfs/fs0/scratch/v/vaguiar/vaguiar/results/outputFAST.txt
 module load r/3.4.3-anaconda5.1.0
 module load julia/1.1.0
-julia /gpfs/fs1/home/v/vaguiar/vaguiar/ReplicationAK/SecondApp/tremblinghand/AK_Footnote_57_experimental_trembling_hand_reps_2970.jl -p 90
+julia /gpfs/fs1/home/v/vaguiar/vaguiar/ReplicationAK/SecondApp/tremblinghand/2App_th_2970.jl -p 90
