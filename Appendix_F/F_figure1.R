@@ -10,12 +10,12 @@ theta0str="0.975"
 ##Petrol good 10
 targetgood="10"
 simulations=11
-results <- vector("list", simulations) 
+results <- vector("list", simulations)
 multiplier=c("1.0","1.01","1.02","1.03","1.04","1.05","1.06","1.07","1.08","1.09","1.1")
 
 
 for (i in 1:(simulations)){
-  file.alias=paste("C:/Users/pegas/Documents/GitHub/ReplicationAK/Output_all/Appendix/counter.good_10._price_10._multiplier_",multiplier[i],"._cuda_start.0.04.end.0.06.theta0.",theta0str,".csv",sep="")
+  file.alias=paste("C:/Users/pegas/Documents/GitHub/ReplicationAK/Output_all/Appendix/F_",multiplier[i],"._",theta0str,".csv",sep="")
   results[[i]]<- read.csv(file.alias)
 }
 
@@ -58,4 +58,3 @@ tikz(paste(filefigure,"\\fig1_",theta0str,"_minimal.tex",sep=""),width =10,heigh
 myplot <- fig1+ labs(x=expression(kappa),y=expression(theta[pet]))+ theme_minimal()
 print(myplot)
 dev.off()
-

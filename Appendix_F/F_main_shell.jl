@@ -249,13 +249,13 @@ ret
 ########
 
 if (ri>1)
-    Resultspower[:,:]=CSV.read(diroutput*"/counter.good_$targetgood._price_$target._multiplier_$kap._cuda_start.$startit.end.$endit.theta0.$theta0.csv",datarow=2)
+    Resultspower[:,:]=CSV.read(diroutput*"/F_$kap._$theta0.csv",datarow=2)
 end
 
 Resultspower[ri,2]=TSMC
 Resultspower[ri,1]=bshare
 
 
-CSV.write(diroutput*"/counter.good_$targetgood._price_$target._multiplier_$kap._cuda_start.$startit.end.$endit.theta0.$theta0.csv",Resultspower)
+CSV.write(diroutput*"/F_$kap._$theta0.csv",Resultspower)
 println("success!")
 GC.gc()
