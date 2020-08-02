@@ -50,7 +50,7 @@ fig1=ggplot(figdf, aes(x=price-1, y=shares, group=type)) +
 fig1
 fig1 +labs(x=TeX("$\\kappa$"),y=TeX("$\\theta_{pet}$"))+ theme_minimal()
 
-ggsave(paste(filefigure,"\\fig1_","_minimal.eps",sep=""),width =10,height =2)
+ggsave(paste(filefigure,"\\fig1.eps",sep=""),width =10,height =2)
 myplot <- fig1 +labs(x=expression(kappa),y=expression(theta[pet])) + theme_minimal()
 print(myplot)
 dev.off()
