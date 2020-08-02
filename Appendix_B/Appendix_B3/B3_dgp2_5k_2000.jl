@@ -200,7 +200,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
 
             Resultspower[ri,2]=TSMC
             Resultspower[ri,1]=ri
-            CSV.write(diroutput*"/B_power_dgp2_chain_$repn.sample_$n.theta0.$theta0.csv",Resultspower)
+            CSV.write(diroutput*"/B3_dgp2_chain_$repn.sample_$n.csv",Resultspower)
             GC.gc()
     end;
     Resultspower

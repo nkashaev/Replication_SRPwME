@@ -13,9 +13,8 @@ dirdata=repdir*"/Data_all"
 ## Appendix B1, Table 2
 ##Loading the values of TS
 RR_dgp_dettest=Array(CSV.read(diroutput*"/Appendix/B1_EDdettest_arr_dgp12.csv"))
-#dgp1=Array(CSV.read(diroutput*"/Appendix/power_dgp1_chain_(0, 10000).sample_2000.theta0.0.8.csv"))
-dgp1=Array(CSV.read(diroutput*"/Appendix/B_power_dgp1_chain_(0, 10000).sample_2000.theta0.0.8.csv"))
-dgp2=Array(CSV.read(diroutput*"/Appendix/B_power_dgp2_chain_(0, 10000).sample_2000.theta0.1.0.csv"))
+dgp1=Array(CSV.read(diroutput*"/Appendix/B1_dgp1_chain_(0, 10000).sample_2000.csv"))
+dgp2=Array(CSV.read(diroutput*"/Appendix/B1_dgp2_chain_(0, 10000).sample_2000.csv"))
 ##Computing average rejection rates
 crval=quantile(Chisq(4),.95) #critical values based on chi2(4)
 RR_dgp1=mean(dgp1[:,2].>crval)
@@ -32,10 +31,10 @@ CSV.write(diroutput*"/Appendix/B1_Table2.csv",Table2)
 
 ## Appendix B2, Table 3
 ##Loading the values of TS
-dgp3_2k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
-dgp3_3k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 10000).sample_3000.theta0.0.1.csv"))
-dgp4_2k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
-dgp4_3k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 10000).sample_3000.theta0.0.1.csv"))
+dgp3_2k=Array(CSV.read(diroutput*"/Appendix/B2_dgp3_chain_(0, 10000).sample_2000.csv"))
+dgp3_3k=Array(CSV.read(diroutput*"/Appendix/B2_dgp3_chain_(0, 10000).sample_3000.csv"))
+dgp4_2k=Array(CSV.read(diroutput*"/Appendix/B2_dgp4_chain_(0, 10000).sample_2000.csv"))
+dgp4_3k=Array(CSV.read(diroutput*"/Appendix/B2_dgp4_chain_(0, 10000).sample_3000.csv"))
 ##Computing average rejection rates
 crval=quantile(Chisq(4),.95) #critical values based on chi2(4)
 RR_dgp3_2k=mean(dgp3_2k[:,2].>crval)
@@ -53,12 +52,12 @@ Table3[2,5]=round(RR_dgp4_3k *100, digits=1)
 CSV.write(diroutput*"/Appendix/B2_Table3.csv",Table3)
 ## Appendix B3, Table 4
 ##Loading the values of TS
-dgp2_10k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp2_chain_(0, 10000).sample_2000.theta0.1.0.csv"))
-dgp2_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp2_chain_(0, 5000).sample_2000.theta0.1.0.csv"))
-dgp3_10k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
-dgp3_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp3_chain_(0, 5000).sample_2000.theta0.0.1.csv"))
-dgp4_10k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 10000).sample_2000.theta0.0.1.csv"))
-dgp4_5k=Array(CSV.read(diroutput*"/Appendix/B_power_dgp4_chain_(0, 5000).sample_2000.theta0.0.1.csv"))
+dgp2_10k=Array(CSV.read(diroutput*"/Appendix/B1_dgp2_chain_(0, 10000).sample_2000.csv"))
+dgp2_5k=Array(CSV.read(diroutput*"/Appendix/B3_dgp2_chain_(0, 5000).sample_2000.csv"))
+dgp3_10k=Array(CSV.read(diroutput*"/Appendix/B2_dgp3_chain_(0, 10000).sample_2000.csv"))
+dgp3_5k=Array(CSV.read(diroutput*"/Appendix/B3_dgp3_chain_(0, 5000).sample_2000.csv"))
+dgp4_10k=Array(CSV.read(diroutput*"/Appendix/B2_dgp4_chain_(0, 10000).sample_2000.csv"))
+dgp4_5k=Array(CSV.read(diroutput*"/Appendix/B3_dgp4_chain_(0, 5000).sample_2000.csv"))
 ##Computing average rejection rates
 crval=quantile(Chisq(4),.95) #critical values based on chi2(4)
 RR_dgp2_10k=mean(dgp2_10k[:,2].>crval)
