@@ -7,7 +7,7 @@ The paper uses two data sets:
 
 -   Ahn, D., Choi, S., Gale, D., & Kariv, S. (2014). Estimating ambiguity aversion in a portfolio choice experiment. Quantitative Economics, 5(2), 195-223.[Replication files] <https://doi.org/10.3982/QE243>
 
-Both data sets were transformed to csv format. The first data set was split into two tables. The first one contains information about single-individual households. The second one contains information about couplesâ households.
+Both data sets were transformed to csv format. The first data set was split into two tables. The first one contains information about single-individual households. The second one contains information about couples' households.
 
 Software
 ========
@@ -167,7 +167,7 @@ This folder contains functions and modules used in the first application that us
 
 ### `Rootfiles`
 
--   `E1_main.jl`  -- the code tests for s/ED-IU-rationalizability using data from couplesâ households.
+-   `E1_main.jl`  -- the code tests for s/ED-IU-rationalizability using data from couples' households.
 
 **Machine/Execution time:** PC3 / 2h.
 
@@ -196,7 +196,7 @@ This folder contains functions and modules used in Appendix E1 that use CUDA.
 
 ### `Rootfiles`
 
--   `E2_main.jl`  -- the code tests for the collective model using data from couplesâ households.
+-   `E2_main.jl`  -- the code tests for the collective model using data from couples' households.
 
 **Machine/Execution time:** PC1 / 1.3h.
 
@@ -257,17 +257,17 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 
 -   `cve.csv`  -- consumption data for the first application (single-individual households).
 
--   `cvecouple.csv`  -- consumption data for the first application (couplesâ households).
+-   `cvecouple.csv`  -- consumption data for the first application (couples' households).
 
 -   `p.csv`  -- price data for the first application (single-individual households).
 
--   `pcouple.csv`  -- price data for the first application (couplesâ households).
+-   `pcouple.csv`  -- price data for the first application (couples' households).
 
 -   `rationalitydata3goods.csv`  -- data for the second application.
 
 -   `rv.csv`  -- interest rate data for the first application (single-individual households).
 
--   `rvcouple.csv`  -- interest rate data for the first application (couplesâ households).
+-   `rvcouple.csv`  -- interest rate data for the first application (couples' households).
 
 `FirstApp`
 ==========
@@ -275,9 +275,9 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 `couples`
 ---------
 
-This folder contains programs generating the output in Section 7.1 for couplesâ households (including footnotes).
+This folder contains programs generating the output in Section 7.1 for couples' households (including footnotes).
 
--   `1App_couples_main_X.jl`  -- the code generates the value of the test statistic using data on couplesâ households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_couples_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 50.
+-   `1App_couples_main_X.jl`  -- the code generates the value of the test statistic using data on couples' households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_couples_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 50.
 
 **Machine/Execution time:** PC1 / 1h per file.
 
@@ -327,7 +327,7 @@ This folder contains functions and modules used in the first application that us
 
 This folder contains main programs used in the first application.
 
--   `1App_main.jl`  -- generates the value of the test statistic for both single-individual and couplesâ households for a generic lover bound of the support of the discount factor.
+-   `1App_main.jl`  -- generates the value of the test statistic for both single-individual and couples' households for a generic lover bound of the support of the discount factor.
 
 -   `1App_singles_ADF.jl`  -- generates the value of the test statistic for testing whether an average discount factor equals to a given value.
 
