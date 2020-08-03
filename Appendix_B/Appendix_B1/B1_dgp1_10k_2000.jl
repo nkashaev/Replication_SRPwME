@@ -131,7 +131,7 @@ function powersimulations(chainM,chainMcu,theta0,n,repn,nfast)
                end
              end
             # This rescaling does not affect the Affriat inequalities and the moment conditions.
-            # It is only needed for to speed up the simulation and for stability of the numerical performance
+            # It is only needed to speed up the simulation and for stability of the numerical performance.
             cve=cve/1e5
             print("Data is ready!")
             ################################################################################

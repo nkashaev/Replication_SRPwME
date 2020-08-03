@@ -20,23 +20,18 @@ function new_lambdacu!(d,Lambda,vsim,cvesim,rho,Lambdac,isim,unif1)
             val1=numer/denom
 
              if denom<0
-                #val1=0<numer/denom ? numer/denom : 0.0
                 thetamin=thetamin<val1 ? val1 : thetamin
 
              end
              if denom>0
-                 #val1=0<numer/denom ? numer/denom : 1000000.0
                   thetamax=thetamax>val1 ? val1 : thetamax
              end
         end
-        #thetamin=thetamin<0.0000001 ? 0.0000001 : thetamin
-        #Lambdac[isim,t]=thetamax > thetamin ? (unif1[isim]*(thetamax-thetamin)+thetamin) : thetamax
-        #Lambdac[isim,t]=unif1[isim]*(thetamax-thetamin)+thetamin
         Lambdac[isim,t]=unif1[isim,t]*(thetamax-thetamin)+thetamin
   end
 
 
-  #Deltac[isim]=(unif1[isim]*(dmax-dmin)+dmin)
+ 
   return nothing
 end
 

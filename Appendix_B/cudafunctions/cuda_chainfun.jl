@@ -40,7 +40,7 @@ function new_deltacu!(d,Delta,vsim,cvesim,rho,Deltac,isim,unif1)
   dmin=dmin<Delta[isim]*1.0 ? dmin : Delta[isim]*1.0
   dmax=dmax>1.0 ? 1.0 : dmax
   Deltac[isim]=dmax > dmin ? (unif1[isim]*(dmax-dmin)+dmin) : dmax
-  #Deltac[isim]=(unif1[isim]*(dmax-dmin)+dmin)
+
   return nothing
 end
 ##New vsim and cvesim generator
@@ -86,7 +86,7 @@ function new_VCcu!(VC,P,dVC,Delta,vsimc,cvesimc,isim,unif2)
        end
    end
    newdir=thetamax > thetamin ? (unif2[isim]*(thetamax-thetamin)+thetamin) : 0.0
-   #newdir=(unif2[isim]*(thetamax-thetamin)+thetamin)
+
    for j=1:T
        vsimc[isim,j]=VC[isim,j,1]+newdir*dVC[isim,j,1]
      for i=2:(K+1)
@@ -167,12 +167,10 @@ function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W)
 
     r=-repn[1]+1
     while r<=repn[2]
-      #Deltac[:],Wc[:,:,:],vsimc[:,:],cvesimc[:,:,:]=jumpfun2(d=d,gamma=gamma,Delta=Delta,cvesim=cvesim,vsim=vsim,cve=cve,rho=rho);
       Deltac[:],Wc[:,:,:],vsimc[:,:],cvesimc[:,:,:]=jumpwrap2!(dcu,Deltacu,vsimcu,cvesimcu,cvecu,rhocu,Deltaccu,vsimccu,cvesimccu,VCu);
       logtrydens=(-sum(sum(rho.*Wc,dims=3).^2,dims=2)+ sum(sum(rho.*W,dims=3).^2,dims=2))[:,1,1]
       dum=log.(rand(n)).<logtrydens
 
-      #dum=zeros(n).<ones(n)
       @inbounds cvesim[dum,:,:]=cvesimc[dum,:,:]
       @inbounds W[dum,:,:]=Wc[dum,:,:]
       @inbounds vsim[dum,:]=vsimc[dum,:]
@@ -182,7 +180,6 @@ function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W)
       cvesimcu=cu(cvesim)
       if r>0
         chainM[:,:,r]=myfun(d=d,gamma=gamma,Delta=Delta,W=W,cve=cve,rho=rho)
-
       end
       r=r+1
     end

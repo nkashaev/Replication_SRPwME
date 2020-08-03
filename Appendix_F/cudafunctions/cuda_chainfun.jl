@@ -86,7 +86,6 @@ function new_VCcu!(VC,P,dVC,Delta,vsimc,cvesimc,isim,unif2)
        end
    end
    newdir=thetamax > thetamin ? (unif2[isim]*(thetamax-thetamin)+thetamin) : 0.0
-   #newdir=(unif2[isim]*(thetamax-thetamin)+thetamin)
    for j=1:T
        vsimc[isim,j]=VC[isim,j,1]+newdir*dVC[isim,j,1]
      for i=2:(K+1)
@@ -128,11 +127,9 @@ end
 
 
 function jumpwrap2!(d,Delta,vsim,cvesim,cve,rho,Deltac,vsimc,cvesimc,VC)
-    #unif1=CuArrays.rand(n).*(.999-.001).+.001
     unif1=CuArrays.rand(n)
     v=curandn(n,T,(K+1))
     dVC=v./norm(v)
-    #unif2=CuArrays.rand(n).*(.999-.001).+.001
     unif2=CuArrays.rand(n)
     numblocks = ceil(Int, n/167)
     @cuda threads=167 blocks=numblocks jumpfuncu!(d,Delta,vsim,cvesim,rho,Deltac,vsimc,cvesimc,unif1,unif2,VC,dVC)
@@ -172,7 +169,6 @@ function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W,bshare)
       logtrydens=(-sum(sum(rho.*Wc,dims=3).^2,dims=2)+ sum(sum(rho.*W,dims=3).^2,dims=2))[:,1,1]
       dum=log.(rand(n)).<logtrydens
 
-      #dum=zeros(n).<ones(n)
       @inbounds cvesim[dum,:,:]=cvesimc[dum,:,:]
       @inbounds W[dum,:,:]=Wc[dum,:,:]
       @inbounds vsim[dum,:]=vsimc[dum,:]
@@ -182,7 +178,6 @@ function gchaincu!(d,gamma,cve,rho,chainM,Delta,vsim,cvesim,W,bshare)
       cvesimcu=cu(cvesim)
       if r>0
         chainM[:,:,r]=myfun(d=d,gamma=gamma,Delta=Delta,W=W,cve=cve,rho=rho,bshare=bshare)
-
       end
       r=r+1
     end

@@ -1,4 +1,4 @@
-#Appendix B3, Final Table
+#Appendix B3, Table 2-4
 using DataFrames, CSV
 using Distributions
 

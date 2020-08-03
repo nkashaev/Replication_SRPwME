@@ -111,14 +111,13 @@ include(rootdir*"/cudafunctions/cuda_fastoptim_counter.jl")
 print("functions are loaded!")
 
 
-### ARGS
+### ARGS -- passing arguments from the command line (see loop.ps1 file)
 ki=parse(Int32,ARGS[1])
 ri=parse(Int32,ARGS[2])
 ## Continue
 kap=kapvec[ki]
 bshare=gridvec[ri]
 ## Discounted prices
-#rho=zeros(n,T,K)
 for i=1:n
   for t=1:T0
     rho[i,t,:]=p[i,t,:]/prod(rv[i,1:t])
@@ -134,7 +133,6 @@ for i=1:n
 end
 
 ## Set Consumption. We initialize the value of the latent consumption C^*_{T+1} to the value C^_{T0}
-#cve=zeros(n,T,K)
 cve[:,1:T0,:]=cvetemp
 cve[:,T,:]=cvetemp[:,T0,:]
 cve

@@ -1,5 +1,5 @@
 ## The code below is almost the same as the code for DGP3 (B1_dgp3_10k_2000.jl)
-# The only difference is that Pareto weights are samles from U[1/3,2/3] instead of always being 1.0
+# The only difference is that Pareto weights are samled from U[1/3,2/3] instead of always being 1/2
 using LinearAlgebra
 using Random
 using MathProgBase
