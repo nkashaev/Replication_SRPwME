@@ -1,3 +1,11 @@
+README Document for Reproducing Results in "Revealed Preferences with Measurement Error"
+
+Victor H. Aguiar
+vaguiar@uwo.ca
+
+Nail Kashaev
+nkashaev@uwo.ca
+
 Data Sources
 ============
 
