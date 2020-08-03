@@ -1,5 +1,7 @@
-README Document for Reproducing Results in "Revealed Preferences with Measurement Error"
-========================================================================================
+README Document for Reproducing Results in 
+==========================================
+"Revealed Preferences with Measurement Error"
+=============================================
 Victor H. Aguiar
 vaguiar@uwo.ca
 
