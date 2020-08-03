@@ -32,15 +32,15 @@ Our second application (Section 8) requires the following software environment.
 
     -   Functions in `revealedPrefsmod.tar`:
 
-        -   `simul.cpp` â It simulates prices and quantities from a uniform distribution good by good. Copyright 2014 Julien Boelaert.
+        -   `simul.cpp`  -- It simulates prices and quantities from a uniform distribution good by good. Copyright 2014 Julien Boelaert.
 
-        -   `simulprice.cpp` â modification of `SimGarp`. It takes prices as given and generates quantities.
+        -   `simulprice.cpp`  -- modification of `SimGarp`. It takes prices as given and generates quantities.
 
-        -   `simulpricewealth.cpp` â modification of `SimGarp`. It takes prices and expenditures and generates quantities that match them.
+        -   `simulpricewealth.cpp`  -- modification of `SimGarp`. It takes prices and expenditures and generates quantities that match them.
 
-        -   `simulquantity.cpp` â modification of `SimGarp`. It takes quantities as given and generates prices.
+        -   `simulquantity.cpp`  -- modification of `SimGarp`. It takes quantities as given and generates prices.
 
-        -   `simulquantitywealth.cpp` â modification of `SimGarp`. It takes quantities and prices as given and generates prices.
+        -   `simulquantitywealth.cpp`  -- modification of `SimGarp`. It takes quantities and prices as given and generates prices.
 
 2.  Install `Julia 1.1.0`
 
@@ -75,28 +75,28 @@ Different parts of the code were run on different machines. In the description o
 
 -   Cluster
 
-    -   Niagara â the Compute Canada cluster Niagara by the University of Toronto. Specifications: <https://docs.computecanada.ca/wiki/Niagara>.
+    -   Niagara  -- the Compute Canada cluster Niagara by the University of Toronto. Specifications: <https://docs.computecanada.ca/wiki/Niagara>.
 
 Content
 =======
 
--   `Appendix_B` â the folder contains the analysis files to replicate the results in Appendix B.
+-   `Appendix_B`  -- the folder contains the analysis files to replicate the results in Appendix B.
 
--   `Appendix_E` â the folder contains the analysis files to replicate the results in Appendix E.
+-   `Appendix_E`  -- the folder contains the analysis files to replicate the results in Appendix E.
 
--   `Appendix_F` â the folder contains the analysis files to replicate the results in Appendix F.
+-   `Appendix_F`  -- the folder contains the analysis files to replicate the results in Appendix F.
 
--   `Data_all` â all data files used in the paper.
+-   `Data_all`  -- all data files used in the paper.
 
--   `Deterministic_test` â the folder contains the analysis files to replicate the results of the deterministic RP tests in Sections 7 and 8.
+-   `Deterministic_test`  -- the folder contains the analysis files to replicate the results of the deterministic RP tests in Sections 7 and 8.
 
--   `FirstApp` â the folder contains the analysis files to replicate the results in Section 7.1 (including footnotes).
+-   `FirstApp`  -- the folder contains the analysis files to replicate the results in Section 7.1 (including footnotes).
 
--   `Julia_environment` â the folder contains toml files with all necessary `Julia` packages.
+-   `Julia_environment`  -- the folder contains toml files with all necessary `Julia` packages.
 
--   `Output_all` â all reproducible outputs reported in the paper.
+-   `Output_all`  -- all reproducible outputs reported in the paper.
 
--   `SecondApp` â the folder contains the analysis files to replicate the results in Section 8 (including footnotes).
+-   `SecondApp`  -- the folder contains the analysis files to replicate the results in Section 8 (including footnotes).
 
 Below we describe the content of every folder except `Julia_environment` and `Output_all`.
 
@@ -106,29 +106,29 @@ Below we describe the content of every folder except `Julia_environment` and `Ou
 `Rootfiles`
 -----------
 
-`B_tables_all.jl` â this code creates all tables in Appendix B (Tables 2-4).
+`B_tables_all.jl`  -- this code creates all tables in Appendix B (Tables 2-4).
 
 `Appendix_B1`
 -------------
 
--   `B1_dgpX_10k_2000.jl` â the code applies our test to simulated data. The data is generated according to DGP`X`, where `X` equals 1 or 2. These results are used in Table 2.
+-   `B1_dgpX_10k_2000.jl`  -- the code applies our test to simulated data. The data is generated according to DGP`X`, where `X` equals 1 or 2. These results are used in Table 2.
 
     **Machine/Execution time:** PC3 / 72h per DGP.
 
     **Output:** `B1_dgpX_chain_(0,10000).sample_2000.csv`.
 
--   `B1_EDdettest_DGP12.jl` â the code applies the deterministic test to simulated data. The data is generated according to DGP1 and DGP2 (See Appendix B1 in the paper). These results are used in Table 2.
+-   `B1_EDdettest_DGP12.jl`  -- the code applies the deterministic test to simulated data. The data is generated according to DGP1 and DGP2 (See Appendix B1 in the paper). These results are used in Table 2.
 
     **Machine/Execution time:** PC3 / 0.5h.
 
     **Output:** `B1_EDdettest_rr_dgp1.csv`, `B1_EDdettest_rr_dgp2.csv`, and `B1_EDdettest_arr_dgp12.csv`.
 
--   `dgp12.jl` â this function generates data according to DGP1 and DGP2.
+-   `dgp12.jl`  -- this function generates data according to DGP1 and DGP2.
 
 `Appendix_B2`
 -------------
 
--   `B2_dgpX_10k_Y.jl` â the code applies our test to simulated data. The data is generated according to DGP`X`, where `X` equals 3 or 4. Sample size`Y` is equal either 2000 or 3000. These results are used in Table 3.
+-   `B2_dgpX_10k_Y.jl`  -- the code applies our test to simulated data. The data is generated according to DGP`X`, where `X` equals 3 or 4. Sample size`Y` is equal either 2000 or 3000. These results are used in Table 3.
 
     **Machine/Execution time:** PC3/ 96h per DGP.
 
@@ -137,7 +137,7 @@ Below we describe the content of every folder except `Julia_environment` and `Ou
 `Appendix_B3`
 -------------
 
--   `B3_dgpX_5k_2000.jl` â the code applies our test to simulated data where the MCMC chain has length 5000. The data is generated according to DGP`X`, where `X` equals 2,3, or 4. These results are used in Table 4.
+-   `B3_dgpX_5k_2000.jl`  -- the code applies our test to simulated data where the MCMC chain has length 5000. The data is generated according to DGP`X`, where `X` equals 2,3, or 4. These results are used in Table 4.
 
     **Machine/Execution time:** PC2 / 48h per DGP.
 
@@ -148,16 +148,16 @@ Below we describe the content of every folder except `Julia_environment` and `Ou
 
 This folder contains a function used in the Appendix B that does not use CUDA.
 
--   `myfun.jl` â the moment function for testing the ED-model.
+-   `myfun.jl`  -- the moment function for testing the ED-model.
 
 `cudafunctions`
 ---------------
 
 This folder contains functions and modules used in the first application that use CUDA.
 
--   `cuda_chainfun.jl` â this code generates the MCMC chain for testing the ED-model.
+-   `cuda_chainfun.jl`  -- this code generates the MCMC chain for testing the ED-model.
 
--   `cuda_fastoptim.jl` â this code constructs the objective function for testing the ED-model.
+-   `cuda_fastoptim.jl`  -- this code constructs the objective function for testing the ED-model.
 
 `Appendix_E`
 ============
@@ -167,7 +167,7 @@ This folder contains functions and modules used in the first application that us
 
 ### `Rootfiles`
 
--   `E1_main.jl` â the code tests for s/ED-IU-rationalizability using data from couplesâ households.
+-   `E1_main.jl`  -- the code tests for s/ED-IU-rationalizability using data from couplesâ households.
 
 **Machine/Execution time:** PC3 / 2h.
 
@@ -177,26 +177,26 @@ This folder contains functions and modules used in the first application that us
 
 This folder contains functions and modules used in Appendix E1 that do not use CUDA.
 
--   `ED_data_load.jl` â this function loads the data.
+-   `ED_data_load.jl`  -- this function loads the data.
 
--   `myfun_IU_meandisc.jl` â the moment function for testing the IU-ED-model.
+-   `myfun_IU_meandisc.jl`  -- the moment function for testing the IU-ED-model.
 
--   `warm_start_searchdelta_justcvex_IU.jl` â this function generates the initial element of the MCMC chain for testing the IU-ED-model.
+-   `warm_start_searchdelta_justcvex_IU.jl`  -- this function generates the initial element of the MCMC chain for testing the IU-ED-model.
 
 ### `cudafunctions`
 
 This folder contains functions and modules used in Appendix E1 that use CUDA.
 
--   `cuda_chainfun_IU_meandisc.jl` â this code generates the MCMC chain for testing the IU-ED-model.
+-   `cuda_chainfun_IU_meandisc.jl`  -- this code generates the MCMC chain for testing the IU-ED-model.
 
--   `cuda_fastoptim_IU_counter.jl` â this code constructs the objective function for testing the IU-ED-model.
+-   `cuda_fastoptim_IU_counter.jl`  -- this code constructs the objective function for testing the IU-ED-model.
 
 `Appendix_E2`
 -------------
 
 ### `Rootfiles`
 
--   `E2_main.jl` â the code tests for the collective model using data from couplesâ households.
+-   `E2_main.jl`  -- the code tests for the collective model using data from couplesâ households.
 
 **Machine/Execution time:** PC1 / 1.3h.
 
@@ -206,19 +206,19 @@ This folder contains functions and modules used in Appendix E1 that use CUDA.
 
 This folder contains functions and modules used in Appendix E2 that do not use CUDA.
 
--   `ED_data_load.jl` â this function loads the data.
+-   `ED_data_load.jl`  -- this function loads the data.
 
--   `myfun_collective.jl` â the moment function for testing the collective model.
+-   `myfun_collective.jl`  -- the moment function for testing the collective model.
 
--   `warm_start_searchdelta_justcvexcollective.jl` â this function generates the initial element of the MCMC chain for testing the collective model.
+-   `warm_start_searchdelta_justcvexcollective.jl`  -- this function generates the initial element of the MCMC chain for testing the collective model.
 
 ### `cudafunctions`
 
 This folder contains functions and modules used in Appendix E2 that use CUDA.
 
--   `cuda_chainfun_collective.jl` â this code generates the MCMC chain for testing the collective model.
+-   `cuda_chainfun_collective.jl`  -- this code generates the MCMC chain for testing the collective model.
 
--   `cuda_fastoptim.jl` â this code constructs the objective function for testing the collective model.
+-   `cuda_fastoptim.jl`  -- this code constructs the objective function for testing the collective model.
 
 `Appendix_F`
 ============
@@ -226,9 +226,9 @@ This folder contains functions and modules used in Appendix E2 that use CUDA.
 `Rootfiles`
 -----------
 
--   `F_figure1.R` â this file generates Figure 1 in Appendix E.
+-   `F_figure1.R`  -- this file generates Figure 1 in Appendix E.
 
--   `F_main_shell.jl` â the code computes the values of the test statistic for testing different counterfactual values. This is an interactive Julia code that allows to test any point over the grid of parameters. We run this file in a powershell loop â loop.ps1.
+-   `F_main_shell.jl`  -- the code computes the values of the test statistic for testing different counterfactual values. This is an interactive Julia code that allows to test any point over the grid of parameters. We run this file in a powershell loop  -- loop.ps1.
 
 **Machine/Execution time:** PC3 / 48h.
 
@@ -239,35 +239,35 @@ This folder contains functions and modules used in Appendix E2 that use CUDA.
 
 This folder contains functions and modules used in Appendix F that do not use CUDA.
 
--   `myfun_counter.jl` â the moment function for testing the counterfactual model.
+-   `myfun_counter.jl`  -- the moment function for testing the counterfactual model.
 
--   `warm_start_searchdelta_justcvex.jl` â this function generates the initial element of the MCMC.
+-   `warm_start_searchdelta_justcvex.jl`  -- this function generates the initial element of the MCMC.
 
 `cudafunctions`
 ---------------
 
 This folder contains functions and modules used in Appendix F that use CUDA.
 
--   `cuda_chainfun.jl` â this code generates the MCMC chain.
+-   `cuda_chainfun.jl`  -- this code generates the MCMC chain.
 
--   `cuda_fastoptim_counter.jl` â this code constructs the objective function for testing the counterfactual model.
+-   `cuda_fastoptim_counter.jl`  -- this code constructs the objective function for testing the counterfactual model.
 
 `Data_all`
 ==========
 
--   `cve.csv` â consumption data for the first application (single-individual households).
+-   `cve.csv`  -- consumption data for the first application (single-individual households).
 
--   `cvecouple.csv` â consumption data for the first application (couplesâ households).
+-   `cvecouple.csv`  -- consumption data for the first application (couplesâ households).
 
--   `p.csv` â price data for the first application (single-individual households).
+-   `p.csv`  -- price data for the first application (single-individual households).
 
--   `pcouple.csv` â price data for the first application (couplesâ households).
+-   `pcouple.csv`  -- price data for the first application (couplesâ households).
 
--   `rationalitydata3goods.csv` â data for the second application.
+-   `rationalitydata3goods.csv`  -- data for the second application.
 
--   `rv.csv` â interest rate data for the first application (single-individual households).
+-   `rv.csv`  -- interest rate data for the first application (single-individual households).
 
--   `rvcouple.csv` â interest rate data for the first application (couplesâ households).
+-   `rvcouple.csv`  -- interest rate data for the first application (couplesâ households).
 
 `FirstApp`
 ==========
@@ -277,7 +277,7 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 
 This folder contains programs generating the output in Section 7.1 for couplesâ households (including footnotes).
 
--   `1App_couples_main_X.jl` â the code generates the value of the test statistic using data on couplesâ households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_couples_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 50.
+-   `1App_couples_main_X.jl`  -- the code generates the value of the test statistic using data on couplesâ households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_couples_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 50.
 
 **Machine/Execution time:** PC1 / 1h per file.
 
@@ -288,35 +288,35 @@ This folder contains programs generating the output in Section 7.1 for couplesâ
 
 This folder contains functions and modules used in the first application that do not use CUDA.
 
--   `ED_data_load.jl` â this function loads the data.
+-   `ED_data_load.jl`  -- this function loads the data.
 
--   `ED_det_test.jl` â this function computes the rejection rate of the deterministic test of the ED-model.
+-   `ED_det_test.jl`  -- this function computes the rejection rate of the deterministic test of the ED-model.
 
--   `myfun_recoverdelta.jl` â the moment function for constructing the confidence set for the average discount factor.
+-   `myfun_recoverdelta.jl`  -- the moment function for constructing the confidence set for the average discount factor.
 
--   `myfun.jl` â the moment function for testing the ED-model.
+-   `myfun.jl`  -- the moment function for testing the ED-model.
 
--   `warm_start_searchdelta_justcvex_delta.jl` â this function generates the initial element of the MCMC chain for constructing the confidence set for the average discount factor.
+-   `warm_start_searchdelta_justcvex_delta.jl`  -- this function generates the initial element of the MCMC chain for constructing the confidence set for the average discount factor.
 
--   `warm_start_searchdelta_justcvex.jl` â this function generates the initial element of the MCMC chain for testing the ED-model.
+-   `warm_start_searchdelta_justcvex.jl`  -- this function generates the initial element of the MCMC chain for testing the ED-model.
 
 `cudafunctions`
 ---------------
 
 This folder contains functions and modules used in the first application that use CUDA.
 
--   `cuda_chainfun_delta.jl` â this code generates the MCMC chain for constructing the confidence set for the average discount factor.
+-   `cuda_chainfun_delta.jl`  -- this code generates the MCMC chain for constructing the confidence set for the average discount factor.
 
--   `cuda_chainfun.jl` â this code generates the MCMC chain for testing the ED-model.
+-   `cuda_chainfun.jl`  -- this code generates the MCMC chain for testing the ED-model.
 
--   `cuda_fastoptim_counter.jl` â this code constructs the objective function for computing the confidence set for the average discount factor.
+-   `cuda_fastoptim_counter.jl`  -- this code constructs the objective function for computing the confidence set for the average discount factor.
 
--   `cuda_fastoptim.jl` â this code constructs the objective function for testing the ED-model.
+-   `cuda_fastoptim.jl`  -- this code constructs the objective function for testing the ED-model.
 
 `deterministic_test`
 --------------------
 
--   `1App_dt.jl` â the code applies the deterministic test to the survey data set. These results are used in the main text of Section 7.1.
+-   `1App_dt.jl`  -- the code applies the deterministic test to the survey data set. These results are used in the main text of Section 7.1.
 
 **Machine/Execution time:** PC1 / 1 min.
 
@@ -327,22 +327,22 @@ This folder contains functions and modules used in the first application that us
 
 This folder contains main programs used in the first application.
 
--   `1App_main.jl` â generates the value of the test statistic for both single-individual and couplesâ households for a generic lover bound of the support of the discount factor.
+-   `1App_main.jl`  -- generates the value of the test statistic for both single-individual and couplesâ households for a generic lover bound of the support of the discount factor.
 
--   `1App_singles_ADF.jl` â generates the value of the test statistic for testing whether an average discount factor equals to a given value.
+-   `1App_singles_ADF.jl`  -- generates the value of the test statistic for testing whether an average discount factor equals to a given value.
 
 `singles`
 ---------
 
 This folder contains programs generating the output in Section 7.1 for single-individual households (including footnotes).
 
--   `1App_singles_ADF_X.jl` â the code computes the value of the test statistic for testing the hypothesis that the average discount factor is equal to `X`. These results are used footnote 48.
+-   `1App_singles_ADF_X.jl`  -- the code computes the value of the test statistic for testing the hypothesis that the average discount factor is equal to `X`. These results are used footnote 48.
 
     **Machine/Execution time:** PC1 / 40min per file.
 
     **Output:** `1App_singles_ADF_X.csv`.
 
--   `1App_singles_main_X.jl` â the code generates the value of the test statistic using data on single-individual households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_singles_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 49.
+-   `1App_singles_main_X.jl`  -- the code generates the value of the test statistic using data on single-individual households when the discount factor is supported on or inside [`X`,1]. For instance, `1App_singles_main_0.1.jl` generates the value of the test statistic when the discount factor is supported on or inside \([0.1,1]\). These results are used in the main text and in footnote 49.
 
     **Machine/Execution time:** PC1 / 0.5h per file.
 
@@ -354,7 +354,7 @@ This folder contains programs generating the output in Section 7.1 for single-in
 `deterministic_test`
 --------------------
 
--   `2App_dt.jl` â the code applies the deterministic test to the experimental data set. These results are used in the main text of Section 7.2.
+-   `2App_dt.jl`  -- the code applies the deterministic test to the experimental data set. These results are used in the main text of Section 7.2.
 
 **Machine/Execution time:** PC1 / 1 min.
 
@@ -365,7 +365,7 @@ This folder contains programs generating the output in Section 7.1 for single-in
 
 Programs generating the output when there is price misperception (Section 8).
 
--   `2App_pm_900.jl` â the code generates the value of the test statistic for the model with price misperception. These results are used in the main text of Section 7.2.
+-   `2App_pm_900.jl`  -- the code generates the value of the test statistic for the model with price misperception. These results are used in the main text of Section 7.2.
 
 **Machine/Execution time:** Cluster / 12h.
 
@@ -376,27 +376,27 @@ Programs generating the output when there is price misperception (Section 8).
 
 This folder contains functions and modules used in the second application.
 
--   `guessfun_price.jl` â this code generates the initial draw of the Montecarlo step for price misperception.
+-   `guessfun_price.jl`  -- this code generates the initial draw of the Montecarlo step for price misperception.
 
--   `guessfun_quantity.jl` â this code generates the initial draw of the Montecarlo step for trembling hand.
+-   `guessfun_quantity.jl`  -- this code generates the initial draw of the Montecarlo step for trembling hand.
 
--   `jumpfun_price.jl` â this function will draw new candidates for the Montecarlo. For this particular application this is the same as the guessfun\_price.jl.
+-   `jumpfun_price.jl`  -- this function will draw new candidates for the Montecarlo. For this particular application this is the same as the guessfun\_price.jl.
 
--   `jumpfun_quantity.jl` â this function will draw new candidates for the Montecarlo. For this particular application this is the same as the guessfun\_quantity.jl.
+-   `jumpfun_quantity.jl`  -- this function will draw new candidates for the Montecarlo. For this particular application this is the same as the guessfun\_quantity.jl.
 
--   `myfun_pm.jl` â the moment condition for price misperception.
+-   `myfun_pm.jl`  -- the moment condition for price misperception.
 
--   `myfun_th.jl` â the moment condition for trembling hand.
+-   `myfun_th.jl`  -- the moment condition for trembling hand.
 
 `tremblinghand`
 ---------------
 
 Programs generating the output when there is trembling-hand measurement error in consumption (Section 8).
 
--   `2App_th_X.jl` â the code generates the value of the test statistic for testing the model with trembling-hand errors in consumption with `X` draws. For instance, `2App_th_900.jl` computes the value of the test statistic using 900 draws. These results are used in the main text of Section 7.2 and in footnote 57.
+-   `2App_th_X.jl`  -- the code generates the value of the test statistic for testing the model with trembling-hand errors in consumption with `X` draws. For instance, `2App_th_900.jl` computes the value of the test statistic using 900 draws. These results are used in the main text of Section 7.2 and in footnote 57.
 
     **Machine/Execution time:** Cluster/ 6h, 11h, and 15h for 580 draws, 900 draws, and 2970 draws, respectively.
 
     **Output:** `2App_th_reps_X.csv`.
 
--   `2App_th_main.jl` â this code is used in `2App_th_X.jl`.
+-   `2App_th_main.jl`  -- this code is used in `2App_th_X.jl`.
