@@ -1,6 +1,6 @@
 README Document for Reproducing Results in
 ==========================================
-"Revealed Preferences with Measurement Error"
+"Stochastic Revealed Preferences with Measurement Error"
 =============================================
 Victor H. Aguiar
 vaguiar@uwo.ca
