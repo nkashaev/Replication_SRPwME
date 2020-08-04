@@ -1,4 +1,4 @@
-README Document for Reproducing Results in 
+README Document for Reproducing Results in
 ==========================================
 "Revealed Preferences with Measurement Error"
 =============================================
@@ -36,9 +36,9 @@ Our second application (Section 8) requires the following software environment.
 
     -   Install `revealedPrefs` package from CRAN in `R 3.4.4.` (`install.packages(revealedPrefs)`).
 
-    -   Unzip the `revealedPrefsmod.zip` package in `library` for your `R` installation (next to where the `revealedPrefs` was installed,e.g. `C:/Users/Elvis/Documents/R/R-3.4.4/library`).
+    -   Use WinRAR to tar the folder `ReplicationAK/SecondApp/revealedPrefsmodprog` to a file named `revealedPrefsmod.tar`, then install this package in `library` for your `R` installation (next to where the `revealedPrefs` was installed,e.g. `C:/Users/Elvis/Documents/R/R-3.4.4/library`).
 
-    -   Alternatively, instead of the previous step, you can compile from the source `revealedPrefsmod.tar` file: `install.packages(revealedPrefsmod.tar,repos=NULL,type=source)`. This source file has the code for the functions that we use to simulate the draws of the true consumption and true price. These files have been written on the basis of the files in `revealedPrefs`. The files were modified under the terms of the GNU public license.
+    -   You can compile from the source `revealedPrefsmod.tar` file: `install.packages(revealedPrefsmod.tar,repos=NULL,type=source)`. This source file has the code for the functions that we use to simulate the draws of the true consumption and true price. These files have been written on the basis of the files in `revealedPrefs`. The files were modified under the terms of the GNU public license.
 
     -   Functions in `revealedPrefsmod.tar`:
 
