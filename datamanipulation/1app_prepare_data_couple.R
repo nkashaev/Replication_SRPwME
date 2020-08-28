@@ -3,8 +3,8 @@ require(R.matlab)
 ## set data
 dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
 ##input files
-irate.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ir.mat",sep="")
-expprice.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ecpf_data.mat",sep="")
+irate.file=paste(dir,"\\","Data_all\\rawdata\\ir.mat",sep="")
+expprice.file=paste(dir,"\\","Data_all\\rawdata\\ecpf_data.mat",sep="")
 ## output files
 p.file=paste(dir,"\\","Data_all\\pcouple.csv",sep="")
 cve.file=paste(dir,"\\","Data_all\\cvecouple.csv",sep="")

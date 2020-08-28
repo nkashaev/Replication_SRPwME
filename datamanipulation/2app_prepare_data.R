@@ -3,7 +3,7 @@ require(R.matlab)
 ## set data
 dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
 ##input files
-Data.file=paste(dir,"\\","datamanipulation\\rawdatafile\\AllData.mat",sep="")
+Data.file=paste(dir,"\\","Data_all\\rawdata\\AllData.mat",sep="")
 ## output files
 OutData.file=paste(dir,"\\","Data_all\\rationalitydata3goods.csv",sep="")
 
