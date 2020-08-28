@@ -98,6 +98,8 @@ Content
 
 -   `Data_all`  -- all data files used in the paper.
 
+-   `Data_manipulation`  -- the folder contains the scripts to transform the raw data.
+
 -   `Deterministic_test`  -- the folder contains the analysis files to replicate the results of the deterministic RP tests in Sections 7 and 8.
 
 -   `FirstApp`  -- the folder contains the analysis files to replicate the results in Section 7.1 (including footnotes).
@@ -285,7 +287,18 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 `rawdata`
 --------------
 
-This folder contains the raw data files and the transformation scripts.
+This folder contains the raw data files.
+
+-   `AllDAta.mat`  -- the raw data for the second application. Source: <http://qeconomics.org/supp/243/code_and_data.zip>.
+
+-   `ecrf_data.mat`  -- the raw expenditure and price data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
+
+-   `ir.mat`  -- the raw interest rate data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
+
+`Data_manipulation`
+==========
+
+This folder contains the raw data transformation files.
 
 -   `1app_prepara_data_couple.R`  -- this code generates `cvecouple.csv`, `pcouple.csv`, and `rvcouple.csv`.
 
@@ -293,11 +306,6 @@ This folder contains the raw data files and the transformation scripts.
 
 -   `2app_prepara_data.R`  -- this code generates `rationalitydata3goods.csv`.
 
--   `AllDAta.mat`  -- the raw data for the second application. Source: <http://qeconomics.org/supp/243/code_and_data.zip>.
-
--   `ecrf_data.mat`  -- the raw expenditure and price data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
-
--   `ir.mat`  -- the raw interest rate data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
 
 `FirstApp`
 ==========
