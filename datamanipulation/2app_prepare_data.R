@@ -9,4 +9,4 @@ OutData.file=paste(dir,"\\","rationalitydata3goods.csv",sep="")
 
 Data=readMat(Data.file)
 
-Data$AllData
+OutData=cbind(Data$AllData,100/Data$AllData[,6],100/Data$AllData[,7],100/Data$AllData[,8])
