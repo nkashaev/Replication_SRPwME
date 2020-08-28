@@ -123,8 +123,7 @@ for( i in 1:n){
 
 
 ## Save
-data=list(cve=cve,p=p,rv=rv)
-
+p=round(p,digits=9)
 write.csv(p,file=p.file,row.names=FALSE,col.names=NA)
 write.csv(cve,file=cve.file,row.names=FALSE,col.names=NA)
 write.csv(rv,file=rv.file,row.names=FALSE,col.names=NA)
