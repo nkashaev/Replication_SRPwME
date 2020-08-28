@@ -15,7 +15,7 @@ The paper uses two data sets:
 
 -   Adams, A., Cherchye, L., De Rock, B., & Verriest, E. (2014). Replication data for: Consume Now or Later? Time Inconsistency, Collective Choice, and Revealed Preference (Version 1) [Data set]. ICPSR - Interuniversity Consortium for Political and Social Research. <https://doi.org/10.3886/E112718V1>
 
--   Ahn, D., Choi, S., Gale, D., & Kariv, S. (2014). Estimating ambiguity aversion in a portfolio choice experiment. Quantitative Economics, 5(2), 195-223.[Replication files] <http://qeconomics.org/supp/243/code_and_data.zip>
+-   Ahn, D., Choi, S., Gale, D., & Kariv, S. (2014). Estimating ambiguity aversion in a portfolio choice experiment. Quantitative Economics, 5(2), 195-223. [Replication files] <http://qeconomics.org/supp/243/code_and_data.zip>
 
 Both data sets were transformed to csv format. The first data set was split into two tables. The first one contains information about single-individual households. The second one contains information about couples' households.
 
@@ -54,7 +54,7 @@ Our second application (Section 8) requires the following software environment.
 
 2.  Install `Julia 1.1.0`
 
-    -   After installation of `Julia 1.1.0` copy `ReplicationAK/julia_environment/1.1.0/Manifest.toml` and `ReplicationAK/julia_environment/1.1.0/Project.toml` files to `.julia/environments/v1.1`. Next run `using Pkg` and `Pkg.instantiate()` in the `Julia` terminal.
+    -   After installation of `Julia 1.1.0` copy `ReplicationAK/Julia_environment/1.1.0/Manifest.toml` and `ReplicationAK/Julia_environment/1.1.0/Project.toml` files to `.julia/environments/v1.1`. Next run `using Pkg` and `Pkg.instantiate()` in the `Julia` terminal.
 
     -   `Pkg.instantiate()` must be executed after all `R` packages are installed.
 
