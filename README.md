@@ -15,7 +15,7 @@ The paper uses two data sets:
 
 -   Adams, A., Cherchye, L., De Rock, B., & Verriest, E. (2014). Replication data for: Consume Now or Later? Time Inconsistency, Collective Choice, and Revealed Preference (Version 1) [Data set]. ICPSR - Interuniversity Consortium for Political and Social Research. <https://doi.org/10.3886/E112718V1>
 
--   Ahn, D., Choi, S., Gale, D., & Kariv, S. (2014). Estimating ambiguity aversion in a portfolio choice experiment. Quantitative Economics, 5(2), 195-223.[Replication files] <https://doi.org/10.3982/QE243>
+-   Ahn, D., Choi, S., Gale, D., & Kariv, S. (2014). Estimating ambiguity aversion in a portfolio choice experiment. Quantitative Economics, 5(2), 195-223.[Replication files] <http://qeconomics.org/supp/243/code_and_data.zip>
 
 Both data sets were transformed to csv format. The first data set was split into two tables. The first one contains information about single-individual households. The second one contains information about couples' households.
 
@@ -265,6 +265,9 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 `Data_all`
 ==========
 
+`Rootfiles`
+-----------
+
 -   `cve.csv`  -- consumption data for the first application (single-individual households).
 
 -   `cvecouple.csv`  -- consumption data for the first application (couples' households).
@@ -278,6 +281,23 @@ This folder contains functions and modules used in Appendix F that use CUDA.
 -   `rv.csv`  -- interest rate data for the first application (single-individual households).
 
 -   `rvcouple.csv`  -- interest rate data for the first application (couples' households).
+
+`rawdata`
+--------------
+
+This folder contains the raw data files and the transformation scripts.
+
+-   `1app_prepara_data_couple.R`  -- this code generates `cvecouple.csv`, `pcouple.csv`, and `rvcouple.csv`.
+
+-   `1app_prepara_data_single.R`  -- this code generates `cve.csv`, `p.csv`, and `rv.csv`.
+
+-   `2app_prepara_data.R`  -- this code generates `rationalitydata3goods.csv`.
+
+-   `AllDAta.mat`  -- the raw data for the second application. Source: <http://qeconomics.org/supp/243/code_and_data.zip>.
+
+-   `ecrf_data.mat`  -- the raw expenditure and price data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
+
+-   `ir.mat`  -- the raw interest rate data for the first application. Source: <https://doi.org/10.3886/E112718V1>.
 
 `FirstApp`
 ==========
