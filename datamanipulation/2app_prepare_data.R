@@ -1,11 +1,11 @@
 ### R 3.2.2
 require(R.matlab)
 ## set data
-dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK\\datamanipulation\\rawdatafile"
+dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
 ##input files
-Data.file=paste(dir,"\\","AllData.mat",sep="")
+Data.file=paste(dir,"\\","datamanipulation\\rawdatafile\\AllData.mat",sep="")
 ## output files
-OutData.file=paste(dir,"\\","rationalitydata3goods.csv",sep="")
+OutData.file=paste(dir,"\\","Data_all\\rationalitydata3goods.csv",sep="")
 
 Data=readMat(Data.file)
 

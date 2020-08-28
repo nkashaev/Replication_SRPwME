@@ -1,14 +1,14 @@
 ### R 3.2.2
 require(R.matlab)
 ## set data
-dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK\\datamanipulation\\rawdatafile"
+dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
 ##input files
-irate.file=paste(dir,"\\","ir.mat",sep="")
-expprice.file=paste(dir,"\\","ecpf_data.mat",sep="")
+irate.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ir.mat",sep="")
+expprice.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ecpf_data.mat",sep="")
 ## output files
-p.file=paste(dir,"\\","pcouple.csv",sep="")
-cve.file=paste(dir,"\\","cvecouple.csv",sep="")
-rv.file=paste(dir,"\\","rvcouple.csv",sep="")
+p.file=paste(dir,"\\","Data_all\\pcouple.csv",sep="")
+cve.file=paste(dir,"\\","Data_all\\cvecouple.csv",sep="")
+rv.file=paste(dir,"\\","Data_all\\rvcouple.csv",sep="")
 
 irate.data=readMat(irate.file)
 ecpf.data=readMat(expprice.file)
@@ -124,7 +124,6 @@ for( i in 1:n){
 
 
 ## Save
-data=list(cve=cve,p=p,rv=rv)
 
 write.csv(p,file=p.file,row.names=FALSE,col.names=NA)
 write.csv(cve,file=cve.file,row.names=FALSE,col.names=NA)
