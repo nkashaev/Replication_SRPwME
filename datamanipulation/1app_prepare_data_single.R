@@ -1,4 +1,4 @@
-### R 3.2.2
+### R 3.6.1.
 require(R.matlab)
 ## set data
 dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
