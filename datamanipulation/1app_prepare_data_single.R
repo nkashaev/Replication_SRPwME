@@ -75,8 +75,8 @@ for( i in 1:n){
 
 	for( k in 1:K){
   		for( t in 1:T){
-	
-   	 p[i,t,k]=ecpf.data$hh.pricedata.all[ind.dum,6:22][t,k] 
+
+   	 p[i,t,k]=ecpf.data$hh.pricedata.all[ind.dum,6:22][t,k]
 
     }
   }
@@ -90,32 +90,32 @@ for( i in 1:n){
 
 	for( k in 1:K){
   		for( t in 1:T){
-	
-   	 cve[i,t,k]=ecpf.data$hh.expdata.all[ind.dum,6:22][t,k] 
+
+   	 cve[i,t,k]=ecpf.data$hh.expdata.all[ind.dum,6:22][t,k]
 
     }
   }
 }
 
-cve=cve/1e5
+cve=cve/1e10
 cve=cve/p
 ##interest rates
 
 for( i in 1:n){
-	
+
        ind.dum=which(ecpf.data$hh.expdata.all==hhid[i])
 	yr=ecpf.data$hh.expdata.all[ind.dum,2][1]
-	qtr=ecpf.data$hh.expdata.all[ind.dum,3][1]	
+	qtr=ecpf.data$hh.expdata.all[ind.dum,3][1]
 	ind.dum.1=which(irate.data$ir[,1]==yr)
       ind.dum.2=which(irate.data$ir[ind.dum.1,2]==qtr)
 	ind.dum.3=ind.dum.1[ind.dum.2]-1
-  	
+
 	for( t in 1:T){
 	r=irate.data$ir[,3][t+ind.dum.3]
 	r= 1+ (10*(r-1))
       r=r^(1/4)
 	r=r-1
-   	rv[i,t]=r 	
+   	rv[i,t]=r
 
     }
 	rv[i,]=c(0,rv[i,1:(T-1)])
@@ -128,4 +128,3 @@ data=list(cve=cve,p=p,rv=rv)
 write.csv(p,file=p.file,row.names=FALSE,col.names=NA)
 write.csv(cve,file=cve.file,row.names=FALSE,col.names=NA)
 write.csv(rv,file=rv.file,row.names=FALSE,col.names=NA)
-
