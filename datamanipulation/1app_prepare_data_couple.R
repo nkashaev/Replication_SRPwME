@@ -125,7 +125,6 @@ for( i in 1:n){
 
 ## Save
 data=list(cve=cve,p=p,rv=rv)
-save(data, file = paste(dir,"\\","PanelElvisv2couples.RData",sep=""))
 
 write.csv(p,file=p.file,row.names=FALSE,col.names=NA)
 write.csv(cve,file=cve.file,row.names=FALSE,col.names=NA)
