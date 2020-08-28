@@ -1,14 +1,14 @@
-### R 3.2.2
+### R 3.6.1.
 require(R.matlab)
 ## set data
-dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK\\datamanipulation\\rawdatafile"
+dir="C:\\Users\\pegas\\Documents\\GitHub\\ReplicationAK"
 ##input files
-irate.file=paste(dir,"\\","ir.mat",sep="")
-expprice.file=paste(dir,"\\","ecpf_data.mat",sep="")
+irate.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ir.mat",sep="")
+expprice.file=paste(dir,"\\","datamanipulation\\rawdatafile\\ecpf_data.mat",sep="")
 ## output files
-p.file=paste(dir,"\\","p.csv",sep="")
-cve.file=paste(dir,"\\","cve.csv",sep="")
-rv.file=paste(dir,"\\","rv.csv",sep="")
+p.file=paste(dir,"\\","Data_all\\p.csv",sep="")
+cve.file=paste(dir,"\\","Data_all\\cve.csv",sep="")
+rv.file=paste(dir,"\\","Data_all\\rv.csv",sep="")
 
 irate.data=readMat(irate.file)
 ecpf.data=readMat(expprice.file)
