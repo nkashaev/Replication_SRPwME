@@ -299,7 +299,7 @@ This folder contains the raw data files.
 `Data_manipulation`
 ==========
 
-This folder contains the raw data transformation files.
+This folder contains the raw data transformation files. Since the raw data files are `mat` files, one needs to install `R.matlab`.
 
 -   `1app_prepara_data_couple.R`  -- this code generates `cvecouple.csv`, `pcouple.csv`, and `rvcouple.csv`.
 
